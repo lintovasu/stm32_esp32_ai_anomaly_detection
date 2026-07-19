@@ -1,0 +1,3 @@
+../Core/Src/sensor_protocol.c:3:10:crc16_ccitt	4
+../Core/Src/sensor_protocol.c:19:17:stuff_byte	5
+../Core/Src/sensor_protocol.c:32:10:hdlc_encode_frame	7
