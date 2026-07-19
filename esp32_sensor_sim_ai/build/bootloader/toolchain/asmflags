@@ -1,0 +1,5 @@
+"-specs=C:/stm32_esp32_ai_anomaly_detection/esp32_sensor_sim_ai/build/bootloader/specs/picolibc.specs"
+-mlongcalls
+-fno-builtin-memcpy
+-fno-builtin-memset
+-fno-builtin-bzero

@@ -1,0 +1,2 @@
+source C:/stm32_esp32_ai_anomaly_detection/esp32_sensor_sim_ai/build/bootloader/gdbinit/symbols
+source C:/stm32_esp32_ai_anomaly_detection/esp32_sensor_sim_ai/build/bootloader/gdbinit/connect

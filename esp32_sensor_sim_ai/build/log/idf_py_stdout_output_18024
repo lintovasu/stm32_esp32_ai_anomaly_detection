@@ -1,0 +1,142 @@
+Command: C:\Espressif\tools\python\v6.0.2\venv\Scripts\python.exe C:\esp\v6.0.2\esp-idf\tools/idf_monitor.py -p COM7 -b 115200 --toolchain-prefix xtensa-esp32s3-elf- --target esp32s3 --revision 0 C:\stm32_esp32_ai_anomaly_detection\esp32_sensor_sim_ai\build\esp32_sensor_sim.elf C:\stm32_esp32_ai_anomaly_detection\esp32_sensor_sim_ai\build\bootloader\bootloader.elf --force-color -m 'C:\Espressif\tools\python\v6.0.2\venv\Scripts\python.exe' 'C:\esp\v6.0.2\esp-idf\tools\idf.py' '-p' 'COM7'
+ESP-ROM:esp32s3-20210327
+Build:Mar 27 2021
+rst:0x1 (POWERON),boot:0x8 (SPI_FAST_FLASH_BOOT)
+SPIWP:0xee
+mode:DIO, clock div:1
+load:0x3fce2820,len:0x14f0
+load:0x403c8700,len:0xda0
+load:0x403cb700,len:0x2f54
+entry 0x403c8908
+[0;32mI (24) boot: ESP-IDF v6.0.2 2nd stage bootloader[0m
+[0;32mI (25) boot: compile time Jul 18 2026 19:13:52[0m
+[0;32mI (25) boot: Multicore bootloader[0m
+[0;32mI (25) boot: chip revision: v0.2[0m
+[0;32mI (28) boot: efuse block revision: v1.4[0m
+[0;32mI (31) boot.esp32s3: Boot SPI Speed : 80MHz[0m
+[0;32mI (35) boot.esp32s3: SPI Mode       : DIO[0m
+[0;32mI (39) boot.esp32s3: SPI Flash Size : 2MB[0m
+[0;32mI (43) boot: Enabling RNG early entropy source...[0m
+[0;32mI (47) boot: Partition Table:[0m
+[0;32mI (50) boot: ## Label            Usage          Type ST Offset   Length[0m
+[0;32mI (56) boot:  0 nvs              WiFi data        01 02 00009000 00006000[0m
+[0;32mI (63) boot:  1 phy_init         RF data          01 01 0000f000 00001000[0m
+[0;32mI (69) boot:  2 factory          factory app      00 00 00010000 00100000[0m
+[0;32mI (76) boot: End of partition table[0m
+[0;32mI (79) esp_image: segment 0: paddr=00010020 vaddr=3c0b0020 size=21158h (135512) map[0m
+[0;32mI (111) esp_image: segment 1: paddr=00031180 vaddr=3fc98600 size=0509ch ( 20636) load[0m
+[0;32mI (116) esp_image: segment 2: paddr=00036224 vaddr=40374000 size=09df4h ( 40436) load[0m
+[0;32mI (125) esp_image: segment 3: paddr=00040020 vaddr=42000020 size=a5650h (677456) map[0m
+[0;32mI (249) esp_image: segment 4: paddr=000e5678 vaddr=4037ddf4 size=0a7f8h ( 43000) load[0m
+[0;32mI (259) esp_image: segment 5: paddr=000efe78 vaddr=50000000 size=00024h (    36) load[0m
+[0;32mI (268) boot: Loaded app from partition at offset 0x10000[0m
+[0;32mI (269) boot: Disabling RNG early entropy source...[0m
+[0;32mI (279) cpu_start: Multicore app[0m
+[0;32mI (287) cpu_start: GPIO 44 and 43 are used as console UART I/O pins[0m
+[0;32mI (288) cpu_start: Pro cpu start user code[0m
+[0;32mI (288) cpu_start: cpu freq: 160000000 Hz[0m
+[0;32mI (290) app_init: Application information:[0m
+[0;32mI (293) app_init: Project name:     esp32_sensor_sim[0m
+[0;32mI (298) app_init: App version:      1[0m
+[0;32mI (301) app_init: Compile time:     Jul 18 2026 19:12:13[0m
+[0;32mI (306) app_init: ELF file SHA256:  d1f77eb87...[0m
+[0;32mI (311) app_init: ESP-IDF:          v6.0.2[0m
+[0;32mI (315) efuse_init: Min chip rev:     v0.0[0m
+[0;32mI (318) efuse_init: Max chip rev:     v0.99 [0m
+[0;32mI (322) efuse_init: Chip rev:         v0.2[0m
+[0;32mI (326) heap_init: Initializing. RAM available for dynamic allocation:[0m
+[0;32mI (333) heap_init: At 3FCA1AD0 len 00047C40 (287 KiB): RAM[0m
+[0;32mI (338) heap_init: At 3FCE9710 len 00005724 (21 KiB): RAM[0m
+[0;32mI (343) heap_init: At 3FCF0000 len 00008000 (32 KiB): DRAM[0m
+[0;32mI (348) heap_init: At 600FE000 len 00001FE8 (7 KiB): RTCRAM[0m
+[0;32mI (354) spi_flash: detected chip: mxic[0m
+[0;32mI (357) spi_flash: flash io: dio[0m
+[0;33mW (360) spi_flash: Detected size(16384k) larger than the size in the binary image header(2048k). Using the size in the binary image header.[0m
+[0;32mI (373) sleep_gpio: Configure to isolate all GPIO pins in sleep state[0m
+[0;32mI (378) sleep_gpio: Enable automatic switching of GPIO sleep configuration[0m
+[0;32mI (386) main_task: Started on CPU0[0m
+[0;32mI (406) main_task: Calling app_main()[0m
+[0;32mI (426) pp: pp rom version: e7ae62f[0m
+[0;32mI (426) net80211: net80211 rom version: e7ae62f[0m
+[0;32mI (436) wifi:wifi driver task: 3fced878, prio:23, stack:6656, core=0[0m
+[0;32mI (446) wifi:wifi firmware version: 00ad238[0m
+[0;32mI (446) wifi:wifi certification version: v7.0[0m
+[0;32mI (446) wifi:config NVS flash: enabled[0m
+[0;32mI (446) wifi:config nano formatting: disabled[0m
+[0;32mI (446) wifi:Init data frame dynamic rx buffer num: 32[0m
+[0;32mI (456) wifi:Init static rx mgmt buffer num: 5[0m
+[0;32mI (456) wifi:Init management short buffer num: 32[0m
+[0;32mI (456) wifi:Init dynamic tx buffer num: 32[0m
+[0;32mI (466) wifi:Init static tx FG buffer num: 2[0m
+[0;32mI (466) wifi:Init static rx buffer size: 1600[0m
+[0;32mI (476) wifi:Init static rx buffer num: 10[0m
+[0;32mI (476) wifi:Init dynamic rx buffer num: 32[0m
+[0;32mI (486) wifi_init: rx ba win: 6[0m
+[0;32mI (486) wifi_init: accept mbox: 6[0m
+[0;32mI (486) wifi_init: tcpip mbox: 32[0m
+[0;32mI (486) wifi_init: udp mbox: 6[0m
+[0;32mI (496) wifi_init: tcp mbox: 6[0m
+[0;32mI (496) wifi_init: tcp tx win: 5760[0m
+[0;32mI (496) wifi_init: tcp rx win: 5760[0m
+[0;32mI (496) wifi_init: tcp mss: 1440[0m
+[0;32mI (506) wifi_init: WiFi IRAM OP enabled[0m
+[0;32mI (506) wifi_init: WiFi RX IRAM OP enabled[0m
+[0;32mI (516) phy_init: phy_version 712,87e8c20e,Apr 13 2026,18:51:10[0m
+[0;32mI (556) wifi:mode : sta (ac:27:6e:a3:4a:68)[0m
+[0;32mI (556) wifi:enable tsf[0m
+[0;32mI (556) sensor_bridge: Connecting to WiFi SSID: YOUR_WIFI_SSID ...[0m
+[0;33mW (2966) sensor_bridge: WiFi disconnected, retrying...[0m
+[0;33mW (5386) sensor_bridge: WiFi disconnected, retrying...[0m
+[0;33mW (7796) sensor_bridge: WiFi disconnected, retrying...[0m
+[0;33mW (10206) sensor_bridge: WiFi disconnected, retrying...[0m
+[0;33mW (12626) sensor_bridge: WiFi disconnected, retrying...[0m
+[0;33mW (15036) sensor_bridge: WiFi disconnected, retrying...[0m
+[0;33mW (17446) sensor_bridge: WiFi disconnected, retrying...[0m
+[0;33mW (19856) sensor_bridge: WiFi disconnected, retrying...[0m
+[0;33mW (22276) sensor_bridge: WiFi disconnected, retrying...[0m
+[0;33mW (24686) sensor_bridge: WiFi disconnected, retrying...[0m
+[0;33mW (27096) sensor_bridge: WiFi disconnected, retrying...[0m
+[0;33mW (29516) sensor_bridge: WiFi disconnected, retrying...[0m
+[0;33mW (31926) sensor_bridge: WiFi disconnected, retrying...[0m
+[0;33mW (34336) sensor_bridge: WiFi disconnected, retrying...[0m
+[0;33mW (36746) sensor_bridge: WiFi disconnected, retrying...[0m
+[0;33mW (39166) sensor_bridge: WiFi disconnected, retrying...[0m
+[0;33mW (41576) sensor_bridge: WiFi disconnected, retrying...[0m
+[0;33mW (43986) sensor_bridge: WiFi disconnected, retrying...[0m
+[0;33mW (46396) sensor_bridge: WiFi disconnected, retrying...[0m
+[0;33mW (48816) sensor_bridge: WiFi disconnected, retrying...[0m
+[0;33mW (51226) sensor_bridge: WiFi disconnected, retrying...[0m
+[0;33mW (53636) sensor_bridge: WiFi disconnected, retrying...[0m
+[0;33mW (56056) sensor_bridge: WiFi disconnected, retrying...[0m
+[0;33mW (58466) sensor_bridge: WiFi disconnected, retrying...[0m
+[0;33mW (60876) sensor_bridge: WiFi disconnected, retrying...[0m
+[0;33mW (63286) sensor_bridge: WiFi disconnected, retrying...[0m
+[0;33mW (65706) sensor_bridge: WiFi disconnected, retrying...[0m
+[0;33mW (68116) sensor_bridge: WiFi disconnected, retrying...[0m
+[0;33mW (70526) sensor_bridge: WiFi disconnected, retrying...[0m
+[0;33mW (72946) sensor_bridge: WiFi disconnected, retrying...[0m
+[0;33mW (75356) sensor_bridge: WiFi disconnected, retrying...[0m
+[0;33mW (77766) sensor_bridge: WiFi disconnected, retrying...[0m
+[0;33mW (80176) sensor_bridge: WiFi disconnected, retrying...[0m
+[0;33mW (82596) sensor_bridge: WiFi disconnected, retrying...[0m
+[0;33mW (85006) sensor_bridge: WiFi disconnected, retrying...[0m
+[0;33mW (87416) sensor_bridge: WiFi disconnected, retrying...[0m
+[0;33mW (89836) sensor_bridge: WiFi disconnected, retrying...[0m
+[0;33mW (92246) sensor_bridge: WiFi disconnected, retrying...[0m
+[0;33mW (94656) sensor_bridge: WiFi disconnected, retrying...[0m
+[0;33mW (97066) sensor_bridge: WiFi disconnected, retrying...[0m
+[0;33mW (99486) sensor_bridge: WiFi disconnected, retrying...[0m
+[0;33mW (101896) sensor_bridge: WiFi disconnected, retrying...[0m
+[0;33mW (104306) sensor_bridge: WiFi disconnected, retrying...[0m
+[0;33mW (106716) sensor_bridge: WiFi disconnected, retrying...[0m
+[0;33mW (109136) sensor_bridge: WiFi disconnected, retrying...[0m
+[0;33mW (111546) sensor_bridge: WiFi disconnected, retrying...[0m
+[0;33mW (113956) sensor_bridge: WiFi disconnected, retrying...[0m
+[0;33mW (116376) sensor_bridge: WiFi disconnected, retrying...[0m
+[0;33mW (118786) sensor_bridge: WiFi disconnected, retrying...[0m
+[0;33mW (121196) sensor_bridge: WiFi disconnected, retrying...[0m
+[0;33mW (123606) sensor_bridge: WiFi disconnected, retrying...[0m
+[0;33mW (126026) sensor_bridge: WiFi disconnected, retrying...[0m
+[0;33mW (128436) sensor_bridge: WiFi disconnected, retrying...[0m
+[0;33mW (130846) sensor_bridge: WiFi disconnected, retrying...[0m
+[0;33mW (133256) sensor_bridge: WiFi disconnected, retrying...[0m
