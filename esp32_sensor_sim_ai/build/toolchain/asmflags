@@ -1,5 +1,0 @@
--mlongcalls
--fno-builtin-memcpy
--fno-builtin-memset
--fno-builtin-bzero
-"-specs=C:/stm32_esp32_ai_anomaly_detection/esp32_sensor_sim_ai/build/specs/picolibc.specs"
