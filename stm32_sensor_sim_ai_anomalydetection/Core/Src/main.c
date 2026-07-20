@@ -22,6 +22,8 @@
 #include "ai_inference.h"
 #include <math.h>
 #include <stdlib.h>
+#include "mpu6050.h"
+#include "vibration_rms.h"
 
 /* Private typedef -----------------------------------------------------------*/
 /* USER CODE BEGIN PTD */
@@ -39,6 +41,8 @@
 /* USER CODE END PM */
 
 /* Private variables ---------------------------------------------------------*/
+I2C_HandleTypeDef hi2c1;
+
 UART_HandleTypeDef huart2;
 
 /* USER CODE BEGIN PV */
@@ -49,6 +53,7 @@ UART_HandleTypeDef huart2;
 void SystemClock_Config(void);
 static void MX_GPIO_Init(void);
 static void MX_USART2_UART_Init(void);
+static void MX_I2C1_Init(void);
 /* USER CODE BEGIN PFP */
 
 #define SENSOR_ID       0x01
@@ -90,8 +95,10 @@ int main(void)
   /* Initialize all configured peripherals */
   MX_GPIO_Init();
   MX_USART2_UART_Init();
+  MX_I2C1_Init();
   /* USER CODE BEGIN 2 */
   ai_inference_init();
+  MPU6050_Init();
 
   uint8_t txbuf[HDLC_TX_BUF_SIZE];
   float t = 0.0f;
@@ -111,9 +118,9 @@ int main(void)
 
 	          /* Simulated vibration RMS: baseline 0.8g, occasional spikes
 	           * to mimic a developing fault condition */
-	          float spike = (((uint32_t)t) % 20 == 0) ? 2.5f : 0.0f;
-	          frame.vibration_rms_g = 0.8f + 0.3f * sinf(t * 0.3f) + pseudo_noise(0.1f) + spike;
-
+	          //float spike = (((uint32_t)t) % 20 == 0) ? 2.5f : 0.0f;
+	          //frame.vibration_rms_g = 0.8f + 0.3f * sinf(t * 0.3f) + pseudo_noise(0.1f) + spike;
+	          frame.vibration_rms_g = vibration_rms_read();
 	          /* Simulated pressure: baseline 101.3 kPa, small variation */
 	          frame.pressure_kpa = 101.3f + 0.5f * sinf(t * 0.02f) + pseudo_noise(0.2f);
 
@@ -181,6 +188,40 @@ void SystemClock_Config(void)
 }
 
 /**
+  * @brief I2C1 Initialization Function
+  * @param None
+  * @retval None
+  */
+static void MX_I2C1_Init(void)
+{
+
+  /* USER CODE BEGIN I2C1_Init 0 */
+
+  /* USER CODE END I2C1_Init 0 */
+
+  /* USER CODE BEGIN I2C1_Init 1 */
+
+  /* USER CODE END I2C1_Init 1 */
+  hi2c1.Instance = I2C1;
+  hi2c1.Init.ClockSpeed = 100000;
+  hi2c1.Init.DutyCycle = I2C_DUTYCYCLE_2;
+  hi2c1.Init.OwnAddress1 = 0;
+  hi2c1.Init.AddressingMode = I2C_ADDRESSINGMODE_7BIT;
+  hi2c1.Init.DualAddressMode = I2C_DUALADDRESS_DISABLE;
+  hi2c1.Init.OwnAddress2 = 0;
+  hi2c1.Init.GeneralCallMode = I2C_GENERALCALL_DISABLE;
+  hi2c1.Init.NoStretchMode = I2C_NOSTRETCH_DISABLE;
+  if (HAL_I2C_Init(&hi2c1) != HAL_OK)
+  {
+    Error_Handler();
+  }
+  /* USER CODE BEGIN I2C1_Init 2 */
+
+  /* USER CODE END I2C1_Init 2 */
+
+}
+
+/**
   * @brief USART2 Initialization Function
   * @param None
   * @retval None
@@ -226,6 +267,7 @@ static void MX_GPIO_Init(void)
 
   /* GPIO Ports Clock Enable */
   __HAL_RCC_GPIOA_CLK_ENABLE();
+  __HAL_RCC_GPIOB_CLK_ENABLE();
 
   /* USER CODE BEGIN MX_GPIO_Init_2 */
 

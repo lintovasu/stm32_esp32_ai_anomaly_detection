@@ -60,8 +60,8 @@ all: main-build
 main-build: NEW-IOT-AI.elf secondary-outputs
 
 # Tool invocations
-NEW-IOT-AI.elf NEW-IOT-AI.map: $(OBJS) $(USER_OBJS) C:\Users\91960\Desktop\STM_Projects\NEW_IOT_AI\STM32F407VGTX_FLASH.ld makefile objects.list $(OPTIONAL_TOOL_DEPS)
-	arm-none-eabi-gcc -o "NEW-IOT-AI.elf" @"objects.list" $(USER_OBJS) $(LIBS) -mcpu=cortex-m4 -T"C:\Users\91960\Desktop\STM_Projects\NEW_IOT_AI\STM32F407VGTX_FLASH.ld" --specs=nosys.specs -Wl,-Map="NEW-IOT-AI.map" -Wl,--gc-sections -static -L"C:\Users\91960\Desktop\STM_Projects\NEW_IOT_AI" "C:/Users/91960/Desktop/STM_Projects/NEW_IOT_AI/Net1201.a" --specs=nano.specs -mfpu=fpv4-sp-d16 -mfloat-abi=hard -mthumb -Wl,--start-group -lc -lm -Wl,--end-group
+NEW-IOT-AI.elf NEW-IOT-AI.map: $(OBJS) $(USER_OBJS) C:\stm32espai_anomaly_detection\stm32_esp32_ai_anomaly_detection\stm32_sensor_sim_ai_anomalydetection\STM32F407VGTX_FLASH.ld makefile objects.list $(OPTIONAL_TOOL_DEPS)
+	arm-none-eabi-gcc -o "NEW-IOT-AI.elf" @"objects.list" $(USER_OBJS) $(LIBS) -mcpu=cortex-m4 -T"C:\stm32espai_anomaly_detection\stm32_esp32_ai_anomaly_detection\stm32_sensor_sim_ai_anomalydetection\STM32F407VGTX_FLASH.ld" --specs=nosys.specs -Wl,-Map="NEW-IOT-AI.map" -Wl,--gc-sections -static -L"C:\stm32espai_anomaly_detection\stm32_esp32_ai_anomaly_detection\stm32_sensor_sim_ai_anomalydetection" "C:/Users/91960/Desktop/STM_Projects/NEW_IOT_AI/Net1201.a" --specs=nano.specs -mfpu=fpv4-sp-d16 -mfloat-abi=hard -mthumb -Wl,--start-group -lc -lm -Wl,--end-group
 	@echo 'Finished building target: $@'
 	@echo ' '
 
