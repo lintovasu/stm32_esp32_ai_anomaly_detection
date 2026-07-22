@@ -235,8 +235,23 @@ they sit entirely downstream of the existing MQTT publish step.
 
 ## Status
 
-Telegraf → InfluxDB write path confirmed working. Grafana connection
-and dashboard panels are the next step.
+Telegraf → InfluxDB write path confirmed working. Grafana data source
+connected and first dashboard panels built.
+
+## Results
+
+**InfluxDB Data Explorer** — querying `sensor_data` for the last minute,
+filtered on the `linto/sensors/node1/data` topic, showing `anomaly_score`
+rising toward a spike:
+
+![InfluxDB Data Explorer](images/influxdb-data-explorer.png)
+
+**Grafana dashboard** — gauge panels split by `is_anomaly` (false/true),
+showing `anomaly_score`, `pressure_kpa`, `temperature_c`, `ts_ms`, and
+`vibration_rms_g` side by side for direct comparison between normal and
+flagged readings:
+
+![Grafana dashboard](images/grafana-dashboard.png)
 
 ## Notes
 
