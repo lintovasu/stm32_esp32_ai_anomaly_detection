@@ -244,14 +244,14 @@ connected and first dashboard panels built.
 filtered on the `linto/sensors/node1/data` topic, showing `anomaly_score`
 rising toward a spike:
 
-![InfluxDB Data Explorer](images/influxdb-data-explorer.png)
+![InfluxDB Data Explorer](influxdb-data-explorer.png)
 
 **Grafana dashboard** — gauge panels split by `is_anomaly` (false/true),
 showing `anomaly_score`, `pressure_kpa`, `temperature_c`, `ts_ms`, and
 `vibration_rms_g` side by side for direct comparison between normal and
 flagged readings:
 
-![Grafana dashboard](images/grafana-dashboard.png)
+![Grafana dashboard](grafana-dashboard.png)
 
 ## Notes
 
