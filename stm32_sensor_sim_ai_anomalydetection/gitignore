@@ -1,0 +1,46 @@
+# ---- Build output ----
+# Everything ci/Makefile.app and ci/Makefile.bootloader produce is
+# regenerated from source every time -- never commit it.
+build/
+*.elf
+*.bin
+*.map
+*.hex
+*.o
+*.d
+*.list
+*.su
+
+# ---- Release artifacts ----
+# manifest.json is generated per-release by generate_manifest.py; the
+# committed source of truth is the version tag, not this file.
+manifest.json
+
+# ---- STM32CubeIDE project/workspace metadata ----
+# These are workspace-local (absolute paths, machine-specific settings)
+# and regenerate automatically when you reopen the project in CubeIDE.
+.metadata/
+RemoteSystemsTempFiles/
+.settings/
+.cproject
+.project
+.launch/
+
+# Keep .mxproject and the CubeMX .ioc file though -- .ioc is your actual
+# pin/peripheral configuration source of truth and should be tracked.
+!*.ioc
+
+# ---- Debugger / flashing temp files ----
+*.stldump
+*.svd.bak
+
+# ---- Editor / OS cruft ----
+.vscode/
+*.swp
+.DS_Store
+Thumbs.db
+
+# ---- Toolchain-local ----
+# If you ever vendor a local copy of the ARM toolchain into the repo by
+# mistake (e.g. accidentally committed while pathing things), keep it out.
+/gcc-arm-none-eabi*/

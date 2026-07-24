@@ -1,0 +1,70 @@
+# Makefile for the OTA bootloader.
+# Builds headlessly with arm-none-eabi-gcc -- no IDE required, so this is
+# what CI actually invokes. If you built the bootloader in CubeIDE first,
+# this mirrors the same flags CubeIDE would use for a Release build; the
+# paths below (CMSIS/HAL) are the usual locations when your STM32Cube
+# firmware package is vendored into the repo under `Drivers/`. Adjust
+# CUBE_DIR if yours lives elsewhere.
+
+TARGET      = bootloader
+BUILD_DIR   = build/bootloader
+
+CC      = arm-none-eabi-gcc
+OBJCOPY = arm-none-eabi-objcopy
+SIZE    = arm-none-eabi-size
+
+MCU_FLAGS = -mcpu=cortex-m4 -mthumb -mfpu=fpv4-sp-d16 -mfloat-abi=hard
+
+CUBE_DIR = Drivers
+CMSIS_INC = $(CUBE_DIR)/CMSIS/Include
+CMSIS_DEV_INC = $(CUBE_DIR)/CMSIS/Device/ST/STM32F4xx/Include
+HAL_INC = $(CUBE_DIR)/STM32F4xx_HAL_Driver/Inc
+HAL_SRC = $(CUBE_DIR)/STM32F4xx_HAL_Driver/Src
+
+SRCS = \
+  bootloader/src/main.c \
+  bootloader/src/flash_metadata.c \
+  bootloader/src/flash_ll.c \
+  bootloader/src/crc32.c \
+  $(HAL_SRC)/stm32f4xx_hal.c \
+  $(HAL_SRC)/stm32f4xx_hal_flash.c \
+  $(HAL_SRC)/stm32f4xx_hal_flash_ex.c \
+  $(HAL_SRC)/stm32f4xx_hal_cortex.c \
+  $(HAL_SRC)/stm32f4xx_hal_rcc.c \
+  startup/startup_stm32f407xx.s
+
+INC = \
+  -Ibootloader/inc \
+  -I$(CMSIS_INC) \
+  -I$(CMSIS_DEV_INC) \
+  -I$(HAL_INC) \
+  -Iconfig    # wherever stm32f4xx_hal_conf.h lives
+
+DEFS = -DSTM32F407xx -DUSE_HAL_DRIVER
+
+CFLAGS = $(MCU_FLAGS) $(DEFS) $(INC) -Wall -O2 -ffunction-sections -fdata-sections -g
+LDFLAGS = $(MCU_FLAGS) -Tlinker/bootloader.ld -Wl,--gc-sections -specs=nano.specs -specs=nosys.specs
+
+OBJS = $(addprefix $(BUILD_DIR)/, $(notdir $(SRCS:.c=.o)))
+OBJS := $(OBJS:.s=.o)
+
+.PHONY: all clean
+
+all: $(BUILD_DIR)/$(TARGET).bin
+
+$(BUILD_DIR):
+	mkdir -p $(BUILD_DIR)
+
+$(BUILD_DIR)/$(TARGET).elf: $(SRCS) | $(BUILD_DIR)
+	$(CC) $(CFLAGS) $(SRCS) $(LDFLAGS) -o $@
+	$(SIZE) $@
+
+$(BUILD_DIR)/$(TARGET).bin: $(BUILD_DIR)/$(TARGET).elf
+	$(OBJCOPY) -O binary $< $@
+	@echo "Bootloader size check (must be <= 32768 bytes):"
+	@stat -c%s $@ 2>/dev/null || stat -f%z $@
+	@[ $$(stat -c%s $@ 2>/dev/null || stat -f%z $@) -le 32768 ] || \
+	  (echo "ERROR: bootloader.bin exceeds its 32KB region!" && exit 1)
+
+clean:
+	rm -rf $(BUILD_DIR)

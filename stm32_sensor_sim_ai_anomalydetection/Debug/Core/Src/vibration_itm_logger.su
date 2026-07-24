@@ -1,0 +1,5 @@
+../Drivers/CMSIS/Include/core_cm4.h:2064:26:ITM_SendChar	16	static,ignoring_inline_asm
+../Core/Src/vibration_itm_logger.c:29:6:itm_init	4	static
+../Core/Src/vibration_itm_logger.c:38:5:_write	32	static
+../Core/Src/vibration_itm_logger.c:47:14:read_vibration_rms_g	32	static
+../Core/Src/vibration_itm_logger.c:71:6:vibration_logging_task	16	static

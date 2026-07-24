@@ -24,7 +24,7 @@
 #include <stdlib.h>
 #include "mpu6050.h"
 #include "vibration_rms.h"
-
+#include "vibration_itm_logger.h"
 /* Private typedef -----------------------------------------------------------*/
 /* USER CODE BEGIN PTD */
 
@@ -99,7 +99,7 @@ int main(void)
   /* USER CODE BEGIN 2 */
   ai_inference_init();
   MPU6050_Init();
-
+  itm_init();
   uint8_t txbuf[HDLC_TX_BUF_SIZE];
   float t = 0.0f;
   /* USER CODE END 2 */
@@ -108,7 +108,8 @@ int main(void)
   /* USER CODE BEGIN WHILE */
   while (1)
   {
-	  SensorFrame_t frame;
+	  	  	  //vibration_logging_task();
+	  	  	  SensorFrame_t frame;
 	          frame.sensor_id = SENSOR_ID;
 	          frame.timestamp_ms = HAL_GetTick();
 
@@ -142,6 +143,7 @@ int main(void)
 
 	          t += (float)SAMPLE_PERIOD_MS / 1000.0f;
 	          HAL_Delay(SAMPLE_PERIOD_MS);
+
   }
   /* USER CODE END 3 */
 }
