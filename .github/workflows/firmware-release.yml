@@ -58,8 +58,8 @@ jobs:
       # (catches "someone added code that no longer fits in 32KB")
       # even though you normally don't re-flash the bootloader itself
       # per release.
-      - name: Build bootloader
-        run: make -f ci/Makefile.bootloader
+      #- name: Build bootloader
+      #  run: make -f ci/Makefile.bootloader
 
       # --- Application, both slots ---
       - name: Build application (Slot A)
@@ -102,7 +102,7 @@ jobs:
           path: |
             build/app_slotA/firmware_v${{ steps.ver.outputs.version }}_slotA.bin
             build/app_slotB/firmware_v${{ steps.ver.outputs.version }}_slotB.bin
-            build/bootloader/bootloader.bin
+            # build/bootloader/bootloader.bin
             manifest.json
           retention-days: 14
 
@@ -113,7 +113,7 @@ jobs:
           files: |
             build/app_slotA/firmware_v${{ steps.ver.outputs.version }}_slotA.bin
             build/app_slotB/firmware_v${{ steps.ver.outputs.version }}_slotB.bin
-            build/bootloader/bootloader.bin
+            # build/bootloader/bootloader.bin
             manifest.json
           generate_release_notes: true
         env:
