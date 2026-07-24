@@ -1,3 +1,72 @@
+# Industrial IoT Sensor Pipeline: STM32 + ESP32-S3 + On-Device AI + MQTT + InfluxDB/Grafana
+
+An end-to-end industrial telemetry pipeline: an STM32 samples sensor data,
+runs on-device anomaly detection with a TinyML autoencoder, hands off to
+an ESP32-S3 over UART, which publishes to MQTT — and from there the data
+flows into InfluxDB and Grafana for storage and visualization.
+
+## Pipeline overview
+
+```
++----------------+     UART / HDLC      +------------------+     MQTT publish       +----------------+
+|     STM32      |     framing with     |     ESP32-S3     |     to topics:         |     HiveMQ      |
+|  FreeRTOS +     |     CRC16-CCITT      |  WiFi/MQTT +      |     .../data           |  public broker  |
+|  AI inference   | -------------------> |  store/forward    | ---------------------> |  (unauthenticated) |
+|  (autoencoder)  |                      |  ring buffer      |     .../diag           |                |
+|                |                      |                   |     .../alert          |                |
++----------------+                      +------------------+                        +--------+-------+
+                                                                                              |
+                                                                                              | mqtt_consumer
+                                                                                              | (subscribes to
+                                                                                              |  all 3 topics)
+                                                                                              v
++----------------+     Flux queries     +------------------+     influxdb_v2 write   +----------------+
+|  Grafana Cloud  | <-------------------  |  InfluxDB Cloud   | <---------------------  |    Telegraf     |
+|  dashboards &   |     (read token)      |  iot_telemetry    |     (write token)       |  MQTT -> Influx |
+|  alert panels   |                      |  bucket            |                        |  bridge process |
++----------------+                      +------------------+                        +----------------+
+```
+
+**How to read this:** sensor data is generated on the STM32, physically hops
+over UART to the ESP32-S3, gets published to MQTT topics on the HiveMQ
+broker, and from there two separate downstream tools pick it up — Telegraf
+pulls it into InfluxDB for storage, and Grafana queries InfluxDB to render
+it as dashboards. Telegraf and Grafana never talk to each other directly;
+InfluxDB sits between them as the shared datastore.
+
+## Project status (current)
+
+- **STM32 side**: FreeRTOS with priority-separated tasks, MPU6050 I2C driver,
+  CMSIS-DSP FFT-based vibration analysis (RMS + peak frequency), fault
+  threshold detection, and a HardFault handler that captures CFSR/HFSR/MMFAR/BFAR
+  register state and persists it across warm resets via a NOINIT RAM section.
+- **ESP32-S3 side**: non-blocking UART frame parsing, WiFi/MQTT with
+  exponential backoff reconnect, a store-and-forward RAM ring buffer, and
+  JSON MQTT publishing.
+- **Shared protocol layer**: HDLC-style byte-stuffing with CRC16-CCITT
+  framing, designed for future RS-485 Modbus RTU multi-drop scaling.
+- **Broker**: public HiveMQ broker (`broker.hivemq.com:1883`), topics:
+  - `linto/sensors/node1/data`
+  - `linto/sensors/node1/diag`
+  - `linto/sensors/node1/alert`
+- **Visualization/storage layer (in progress)**: Telegraf subscribes to all
+  three MQTT topics and writes into InfluxDB Cloud (`iot_telemetry` bucket).
+  Telegraf → InfluxDB write path is confirmed working. Grafana Cloud
+  dashboarding is the next step (data source + panels not yet built).
+- **Known issue**: ESP-IDF v6.0.2 build/flash on Windows — MQTT component
+  moved to Component Registry, `esp_driver_uart` replacing the monolithic
+  driver component; intermittent "No serial data received" on COM6, likely
+  needs manual BOOT+RESET bootloader entry.
+
+## Planned next steps
+
+- TLS/auth on the MQTT broker (moving off the public unauthenticated broker)
+- OTA updates
+- BLE WiFi provisioning
+- Grafana dashboard build-out
+
+---
+
 # On-Device Vibration Anomaly Detection: STM32 + STM32Cube AI Studio + ESP32-S3 + MQTT
 
 Extends `stm32_sensor_sim` / `esp32_sensor_sim` with an autoencoder that
@@ -138,3 +207,57 @@ actual model.
   logged real "normal" operation data rather than the synthetic
   formulas - the synthetic data is only a stand-in to prove the
   pipeline works before real sensor data is available.
+
+---
+
+# Visualization & Storage: MQTT → Telegraf → InfluxDB Cloud → Grafana Cloud
+
+Once sensor data lands on the MQTT broker, Telegraf bridges it into
+InfluxDB Cloud for storage, and Grafana Cloud reads from InfluxDB to
+render dashboards. Neither Telegraf nor Grafana touch the firmware —
+they sit entirely downstream of the existing MQTT publish step.
+
+## Setup
+
+1. **InfluxDB Cloud** — create an account, a bucket (`iot_telemetry`),
+   and two scoped API tokens: one Write-only (for Telegraf) and one
+   Read-only (for Grafana).
+2. **Telegraf** — install locally, configure an `mqtt_consumer` input
+   per topic (`data`, `diag`, `alert`) pointed at the HiveMQ broker,
+   and an `influxdb_v2` output pointed at the InfluxDB Cloud bucket
+   using the write token (kept as an environment variable, not
+   hardcoded in the config).
+3. **Grafana Cloud** — create an account, add InfluxDB as a data
+   source (Flux query language, read token), and build panels for
+   `vibration_rms_g`, `temperature_c`, `pressure_kpa`, and
+   `anomaly_score`, plus a filtered view on `is_anomaly == true` to
+   surface alert events.
+
+## Status
+
+Telegraf → InfluxDB write path confirmed working. Grafana data source
+connected and first dashboard panels built.
+
+## Results
+
+**InfluxDB Data Explorer** — querying `sensor_data` for the last minute,
+filtered on the `linto/sensors/node1/data` topic, showing `anomaly_score`
+rising toward a spike:
+
+![InfluxDB Data Explorer](influxdb-data-explorer.png)
+
+**Grafana dashboard** — gauge panels split by `is_anomaly` (false/true),
+showing `anomaly_score`, `pressure_kpa`, `temperature_c`, `ts_ms`, and
+`vibration_rms_g` side by side for direct comparison between normal and
+flagged readings:
+
+![Grafana dashboard](grafana-dashboard.png)
+
+## Notes
+
+- `ts_ms` in the sensor payload is a device uptime counter, not epoch
+  time — until firmware sends real epoch time, Telegraf is configured
+  to stamp arrival time instead of parsing `ts_ms` directly.
+- The public HiveMQ broker requires no auth, which simplifies the
+  Telegraf MQTT input for now — TLS/auth is a planned follow-up once
+  the broker moves off the public instance.
