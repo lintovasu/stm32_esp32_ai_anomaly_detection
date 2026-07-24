@@ -1,12 +1,26 @@
 name: Firmware Release
 
-# Triggers on any version tag push, e.g. `git tag v1.4.0 && git push --tags`.
-# The tag is the single source of truth for the version string baked
-# into both binaries and into manifest.json.
+# Triggers three ways:
+#  1. Push a version tag (git tag v1.4.0 && git push --tags) -- the real
+#     release path. Builds both slots + bootloader and publishes a
+#     GitHub Release with all artifacts attached.
+#  2. Any ordinary push to main -- runs the SAME build (catches breakage
+#     on every commit, "does it still compile") but does NOT publish a
+#     release. This is what makes it "automatic" without you doing
+#     anything beyond your normal git push.
+#  3. Manual run from the Actions tab (workflow_dispatch) -- for testing
+#     with an arbitrary version string, also does not publish a release.
 on:
   push:
+    branches: [main, master]
     tags:
       - 'v*.*.*'
+  workflow_dispatch:
+    inputs:
+      version:
+        description: 'Version string to build (no v prefix), e.g. 1.4.0-test'
+        required: true
+        default: '0.0.0-test'
 
 jobs:
   build-and-release:
@@ -17,9 +31,19 @@ jobs:
         with:
           submodules: recursive   # if your STM32Cube Drivers/ dir is a submodule
 
-      - name: Extract version from tag
+      - name: Extract version
         id: ver
-        run: echo "version=${GITHUB_REF_NAME#v}" >> "$GITHUB_OUTPUT"
+        run: |
+          if [ "${{ github.event_name }}" = "workflow_dispatch" ]; then
+            echo "version=${{ github.event.inputs.version }}" >> "$GITHUB_OUTPUT"
+          elif [[ "${{ github.ref }}" == refs/tags/* ]]; then
+            echo "version=${GITHUB_REF_NAME#v}" >> "$GITHUB_OUTPUT"
+          else
+            # Ordinary push to main -- not a real release, so use a
+            # dev-tagged version built from the short commit SHA so
+            # build artifacts are traceable back to the exact commit.
+            echo "version=0.0.0-dev.$(git rev-parse --short HEAD)" >> "$GITHUB_OUTPUT"
+          fi
 
       - name: Install ARM GCC toolchain
         run: |
@@ -71,7 +95,19 @@ jobs:
           done
           python3 -c "import json; json.load(open('manifest.json'))"
 
+      - name: Upload build artifacts (always, even on test runs)
+        uses: actions/upload-artifact@v4
+        with:
+          name: firmware-v${{ steps.ver.outputs.version }}
+          path: |
+            build/app_slotA/firmware_v${{ steps.ver.outputs.version }}_slotA.bin
+            build/app_slotB/firmware_v${{ steps.ver.outputs.version }}_slotB.bin
+            build/bootloader/bootloader.bin
+            manifest.json
+          retention-days: 14
+
       - name: Publish GitHub Release with artifacts
+        if: startsWith(github.ref, 'refs/tags/')   # only real version tags cut a release
         uses: softprops/action-gh-release@v2
         with:
           files: |
