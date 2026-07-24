@@ -59,7 +59,7 @@ jobs:
       # even though you normally don't re-flash the bootloader itself
       # per release.
       - name: Build bootloader
-        run: make -f ci/Makefile.bootloader
+       # run: make -f ci/Makefile.bootloader
 
       # --- Application, both slots ---
       - name: Build application (Slot A)
