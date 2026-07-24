@@ -63,10 +63,10 @@ jobs:
 
       # --- Application, both slots ---
       - name: Build application (Slot A)
-        run: make -f ../../stm32_sensor_sim_ai_anomalydetection/ci/Makefile.app SLOT=A VERSION=${{ steps.ver.outputs.version }}
+        run: make -f ../../../stm32_sensor_sim_ai_anomalydetection/ci/Makefile.app SLOT=A VERSION=${{ steps.ver.outputs.version }}
 
       - name: Build application (Slot B)
-        run: make -f ../../stm32_sensor_sim_ai_anomalydetection/ci/Makefile.app SLOT=B VERSION=${{ steps.ver.outputs.version }}
+        run: make -f ../../../stm32_sensor_sim_ai_anomalydetection/ci/Makefile.app SLOT=B VERSION=${{ steps.ver.outputs.version }}
 
       # --- Manifest with SHA-256 for both slot binaries ---
       - name: Generate manifest.json
