@@ -11,9 +11,9 @@ SLOT ?= A
 VERSION ?= 0.0.0-dev
 
 ifeq ($(SLOT),A)
-  LDSCRIPT = linker/app_slotA.ld
+  LDSCRIPT = stm32_sensor_sim_ai_anomalydetection/linker/app_slotA.ld
 else ifeq ($(SLOT),B)
-  LDSCRIPT = linker/app_slotB.ld
+  LDSCRIPT = stm32_sensor_sim_ai_anomalydetection/linker/app_slotB.ld
 else
   $(error SLOT must be A or B, got '$(SLOT)')
 endif
@@ -42,26 +42,27 @@ MIDDLEWARE_INC = $(ROOT_DIR)/Middlewares/ST/AI/Inc
 # or check Project Properties > C/C++ Build > Settings > MCU GCC Linker
 # > Libraries in CubeIDE, then set AI_LIB_DIR / AI_LIB_NAME to match
 # (AI_LIB_NAME is the filename minus the "lib" prefix and ".a" suffix).
-AI_LIB_DIR = .
+AI_LIB_DIR = stm32_sensor_sim_ai_anomalydetection
 AI_LIB_NAME ?= Net1201
 
 # Your existing application sources -- replace this glob with your actual
 # project's file list (sensor drivers, FreeRTOS, MQTT/UART handling,
 # etc). Shown here as a placeholder pattern plus the OTA client module
 # and shared flash/crc/metadata code every app build needs.
-APP_SRCS := $(wildcard Src/*.c) $(wildcard Core/Src/*.c)
-#AI_SRC := $(wildcard Middlewares/ST/AI/MISC/Src/*.c)
 
-OTA_CLIENT_SRCS = \
-  app_ota_client/Src/ota_receiver.c \
-  app_ota_client/Src/ota_confirm.c \
-  bootloader/Src/flash_metadata.c \
-  bootloader/Src/flash_ll.c \
-  bootloader/Src/crc32.c
+APP_SRCS := $(wildcard Src/*.c) $(wildcard Core/Src/*.c)
+OTA_CLIENT_SRCS := $(wildcard app_ota_client/Src/*.c)
+STARTUP :=$(wildcard Core/Startup/*.s)
+#OTA_CLIENT_SRCS = \
+#  app_ota_client/Src/ota_receiver.c \
+#  app_ota_client/Src/ota_confirm.c \
+#  bootloader/Src/flash_metadata.c \
+#  bootloader/Src/flash_ll.c \
+#  bootloader/Src/crc32.c
 
 HAL_SRCS = $(wildcard $(HAL_SRC)/*.c)
 
-SRCS = $(APP_SRCS) $(OTA_CLIENT_SRCS) $(HAL_SRCS) Core/Startup/startup_stm32f407vgtx.s
+SRCS = $(APP_SRCS) $(OTA_CLIENT_SRCS) $(HAL_SRCS) $(STARTUP)
 
 INC = \
   -Iapp_ota_client/inc \
