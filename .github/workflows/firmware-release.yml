@@ -71,7 +71,7 @@ jobs:
       # --- Manifest with SHA-256 for both slot binaries ---
       - name: Generate manifest.json
         run: |
-          python3 stm32_sensor_sim_ai_anomalydetection/ci/scripts/generate_manifest.py \
+          python3 stm32_sensor_sim_ai_anomalydetection/ci/script/generate_manifest.py \
             --version "${{ steps.ver.outputs.version }}" \
             --slotA "build/app_slotA/firmware_v${{ steps.ver.outputs.version }}_slotA.bin" \
             --slotB "build/app_slotB/firmware_v${{ steps.ver.outputs.version }}_slotB.bin" \
