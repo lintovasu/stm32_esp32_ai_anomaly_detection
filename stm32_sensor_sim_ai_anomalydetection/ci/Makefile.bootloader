@@ -14,28 +14,31 @@ OBJCOPY = arm-none-eabi-objcopy
 SIZE    = arm-none-eabi-size
 
 MCU_FLAGS = -mcpu=cortex-m4 -mthumb -mfpu=fpv4-sp-d16 -mfloat-abi=hard
-
-CUBE_DIR = Drivers
+ROOT_DIR = stm32_sensor_sim_ai_anomalydetection
+CUBE_DIR = $(ROOT_DIR)/Drivers
 CMSIS_INC = $(CUBE_DIR)/CMSIS/Include
 CMSIS_DEV_INC = $(CUBE_DIR)/CMSIS/Device/ST/STM32F4xx/Include
 HAL_INC = $(CUBE_DIR)/STM32F4xx_HAL_Driver/Inc
 HAL_SRC = $(CUBE_DIR)/STM32F4xx_HAL_Driver/Src
 
 SRCS = \
-  bootloader/src/main.c \
-  bootloader/src/flash_metadata.c \
-  bootloader/src/flash_ll.c \
-  bootloader/src/crc32.c \
+  $(ROOT_DIR)/bootloader/src/main.c \
+  $(ROOT_DIR)/bootloader/src/flash_metadata.c \
+  $(ROOT_DIR)/bootloader/src/flash_ll.c \
+  $(ROOT_DIR)/bootloader/src/crc32.c \
   $(HAL_SRC)/stm32f4xx_hal.c \
   $(HAL_SRC)/stm32f4xx_hal_flash.c \
   $(HAL_SRC)/stm32f4xx_hal_flash_ex.c \
   $(HAL_SRC)/stm32f4xx_hal_cortex.c \
   $(HAL_SRC)/stm32f4xx_hal_rcc.c \
-  startup/startup_stm32f407xx.s
+  $(ROOT_DIR)/Core/Src/system_stm32f4xx.c \
+  $(ROOT_DIR)/Core/Startup/startup_stm32f407vgtx.s
+  
 
 INC = \
-  -Ibootloader/inc \
+  -I$(ROOT_DIR)/bootloader/inc \
   -I$(CMSIS_INC) \
+  -IInc -I$(ROOT_DIR)/Core/Inc \
   -I$(CMSIS_DEV_INC) \
   -I$(HAL_INC) \
   -Iconfig    # wherever stm32f4xx_hal_conf.h lives
@@ -43,7 +46,7 @@ INC = \
 DEFS = -DSTM32F407xx -DUSE_HAL_DRIVER
 
 CFLAGS = $(MCU_FLAGS) $(DEFS) $(INC) -Wall -O2 -ffunction-sections -fdata-sections -g
-LDFLAGS = $(MCU_FLAGS) -Tlinker/bootloader.ld -Wl,--gc-sections -specs=nano.specs -specs=nosys.specs
+LDFLAGS = $(MCU_FLAGS) -T$(ROOT_DIR)/linker/bootloader.ld -Wl,--gc-sections -specs=nano.specs -specs=nosys.specs
 
 OBJS = $(addprefix $(BUILD_DIR)/, $(notdir $(SRCS:.c=.o)))
 OBJS := $(OBJS:.s=.o)

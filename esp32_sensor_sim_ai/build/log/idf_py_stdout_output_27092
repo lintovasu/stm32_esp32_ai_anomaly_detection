@@ -1,0 +1,330 @@
+Command: C:\Espressif\tools\python\v6.0.2\venv\Scripts\python.exe C:\esp\v6.0.2\esp-idf\tools/idf_monitor.py -p COM7 -b 115200 --toolchain-prefix xtensa-esp32s3-elf- --target esp32s3 --revision 0 C:\stm32espai_anomaly_detection\stm32_esp32_ai_anomaly_detection\esp32_sensor_sim_ai\build\esp32_sensor_sim.elf C:\stm32espai_anomaly_detection\stm32_esp32_ai_anomaly_detection\esp32_sensor_sim_ai\build\bootloader\bootloader.elf --force-color -m 'C:\Espressif\tools\python\v6.0.2\venv\Scripts\python.exe' 'C:\esp\v6.0.2\esp-idf\tools\idf.py' '-p' 'COM7'
+ESP-ROM:esp�ESP-ROM:esp32s3-20210327
+Build:Mar 27 2021
+rst:0x1 (POWERON),boot:0x8 (SPI_FAST_FLASH_BOOT)
+SPIWP:0xee
+mode:DIO, clock div:1
+load:0x3fce2820,len:0x14f0
+load:0x403c8700,len:0xda0
+load:0x403cb700,len:0x2f54
+entry 0x403c8908
+[0;32mI (24) boot: ESP-IDF v6.0.2 2nd stage bootloader[0m
+[0;32mI (25) boot: compile time Jul 26 2026 23:47:08[0m
+[0;32mI (25) boot: Multicore bootloader[0m
+[0;32mI (25) boot: chip revision: v0.2[0m
+[0;32mI (28) boot: efuse block revision: v1.4[0m
+[0;32mI (31) boot.esp32s3: Boot SPI Speed : 80MHz[0m
+[0;32mI (35) boot.esp32s3: SPI Mode       : DIO[0m
+[0;32mI (39) boot.esp32s3: SPI Flash Size : 2MB[0m
+[0;32mI (43) boot: Enabling RNG early entropy source...[0m
+[0;32mI (47) boot: Partition Table:[0m
+[0;32mI (50) boot: ## Label            Usage          Type ST Offset   Length[0m
+[0;32mI (56) boot:  0 nvs              WiFi data        01 02 00009000 00006000[0m
+[0;32mI (63) boot:  1 phy_init         RF data          01 01 0000f000 00001000[0m
+[0;32mI (69) boot:  2 factory          factory app      00 00 00010000 00100000[0m
+[0;32mI (76) boot: End of partition table[0m
+[0;32mI (79) esp_image: segment 0: paddr=00010020 vaddr=3c0b0020 size=21158h (135512) map[0m
+[0;32mI (111) esp_image: segment 1: paddr=00031180 vaddr=3fc98600 size=0509ch ( 20636) load[0m
+[0;32mI (116) esp_image: segment 2: paddr=00036224 vaddr=40374000 size=09df4h ( 40436) load[0m
+[0;32mI (125) esp_image: segment 3: paddr=00040020 vaddr=42000020 size=a5658h (677464) map[0m
+[0;32mI (249) esp_image: segment 4: paddr=000e5680 vaddr=4037ddf4 size=0a7f8h ( 43000) load[0m
+[0;32mI (259) esp_image: segment 5: paddr=000efe80 vaddr=50000000 size=00024h (    36) load[0m
+[0;32mI (268) boot: Loaded app from partition at offset 0x10000[0m
+[0;32mI (269) boot: Disabling RNG early entropy source...[0m
+[0;32mI (279) cpu_start: Multicore app[0m
+[0;32mI (287) cpu_start: GPIO 44 and 43 are used as console UART I/O pins[0m
+[0;32mI (288) cpu_start: Pro cpu start user code[0m
+[0;32mI (288) cpu_start: cpu freq: 160000000 Hz[0m
+[0;32mI (290) app_init: Application information:[0m
+[0;32mI (293) app_init: Project name:     esp32_sensor_sim[0m
+[0;32mI (298) app_init: App version:      v1.4.0-15-g5dd56f9-dirty[0m
+[0;32mI (303) app_init: Compile time:     Jul 26 2026 23:46:28[0m
+[0;32mI (308) app_init: ELF file SHA256:  9e4b5e3af...[0m
+[0;32mI (313) app_init: ESP-IDF:          v6.0.2[0m
+[0;32mI (317) efuse_init: Min chip rev:     v0.0[0m
+[0;32mI (320) efuse_init: Max chip rev:     v0.99 [0m
+[0;32mI (324) efuse_init: Chip rev:         v0.2[0m
+[0;32mI (328) heap_init: Initializing. RAM available for dynamic allocation:[0m
+[0;32mI (335) heap_init: At 3FCA1AD0 len 00047C40 (287 KiB): RAM[0m
+[0;32mI (340) heap_init: At 3FCE9710 len 00005724 (21 KiB): RAM[0m
+[0;32mI (345) heap_init: At 3FCF0000 len 00008000 (32 KiB): DRAM[0m
+[0;32mI (350) heap_init: At 600FE000 len 00001FE8 (7 KiB): RTCRAM[0m
+[0;32mI (356) spi_flash: detected chip: mxic[0m
+[0;32mI (359) spi_flash: flash io: dio[0m
+[0;33mW (362) spi_flash: Detected size(16384k) larger than the size in the binary image header(2048k). Using the size in the binary image header.[0m
+[0;32mI (375) sleep_gpio: Configure to isolate all GPIO pins in sleep state[0m
+[0;32mI (380) sleep_gpio: Enable automatic switching of GPIO sleep configuration[0m
+[0;32mI (387) main_task: Started on CPU0[0m
+[0;32mI (407) main_task: Calling app_main()[0m
+[0;32mI (427) pp: pp rom version: e7ae62f[0m
+[0;32mI (427) net80211: net80211 rom version: e7ae62f[0m
+[0;32mI (437) wifi:wifi driver task: 3fced8fc, prio:23, stack:6656, core=0[0m
+[0;32mI (447) wifi:wifi firmware version: 00ad238[0m
+[0;32mI (447) wifi:wifi certification version: v7.0[0m
+[0;32mI (447) wifi:config NVS flash: enabled[0m
+[0;32mI (447) wifi:config nano formatting: disabled[0m
+[0;32mI (447) wifi:Init data frame dynamic rx buffer num: 32[0m
+[0;32mI (457) wifi:Init static rx mgmt buffer num: 5[0m
+[0;32mI (457) wifi:Init management short buffer num: 32[0m
+[0;32mI (457) wifi:Init dynamic tx buffer num: 32[0m
+[0;32mI (467) wifi:Init static tx FG buffer num: 2[0m
+[0;32mI (467) wifi:Init static rx buffer size: 1600[0m
+[0;32mI (477) wifi:Init static rx buffer num: 10[0m
+[0;32mI (477) wifi:Init dynamic rx buffer num: 32[0m
+[0;32mI (487) wifi_init: rx ba win: 6[0m
+[0;32mI (487) wifi_init: accept mbox: 6[0m
+[0;32mI (487) wifi_init: tcpip mbox: 32[0m
+[0;32mI (487) wifi_init: udp mbox: 6[0m
+[0;32mI (497) wifi_init: tcp mbox: 6[0m
+[0;32mI (497) wifi_init: tcp tx win: 5760[0m
+[0;32mI (497) wifi_init: tcp rx win: 5760[0m
+[0;32mI (507) wifi_init: tcp mss: 1440[0m
+[0;32mI (507) wifi_init: WiFi IRAM OP enabled[0m
+[0;32mI (507) wifi_init: WiFi RX IRAM OP enabled[0m
+[0;32mI (517) phy_init: phy_version 712,87e8c20e,Apr 13 2026,18:51:10[0m
+[0;32mI (557) wifi:mode : sta (ac:27:6e:a3:4a:68)[0m
+[0;32mI (557) wifi:enable tsf[0m
+[0;32mI (557) sensor_bridge: Connecting to WiFi SSID: Vodafone-AF70 ...[0m
+[0;32mI (567) wifi:new:<11,0>, old:<1,0>, ap:<255,255>, sta:<11,0>, prof:1, snd_ch_cfg:0x0[0m
+[0;32mI (567) wifi:state: init -> auth (0xb0)[0m
+[0;32mI (627) wifi:state: auth -> assoc (0x0)[0m
+[0;32mI (637) wifi:state: assoc -> run (0x10)[0m
+[0;32mI (677) wifi:connected with Vodafone-AF70, aid = 133, channel 11, BW20, bssid = b0:5d:d4:8d:44:5d[0m
+[0;32mI (677) wifi:security: WPA2-PSK, phy: bgn, rssi: -48, cipher(pairwise:0x3, group:0x3), pmf:0[0m
+[0;32mI (677) wifi:pm start, type: 1[0m
+
+[0;32mI (677) wifi:dp: 1, bi: 102400, li: 3, scale listen interval from 307200 us to 307200 us[0m
+[0;32mI (687) wifi:set rx beacon pti, rx_bcn_pti: 0, bcn_timeout: 25000, mt_pti: 0, mt_time: 10000[0m
+[0;32mI (727) wifi:dp: 2, bi: 102400, li: 4, scale listen interval from 307200 us to 409600 us[0m
+[0;32mI (727) wifi:AP's beacon interval = 102400 us, DTIM period = 2[0m
+[0;32mI (1727) esp_netif_handlers: sta ip: 192.168.0.244, mask: 255.255.255.0, gw: 192.168.0.1[0m
+[0;32mI (1727) sensor_bridge: Got IP: 192.168.0.244[0m
+[0;32mI (1727) sensor_bridge: WiFi connected.[0m
+[0;32mI (1727) main_task: Returned from app_main()[0m
+[0;32mI (3187) sensor_bridge: MQTT connected to broker[0m
+[0;33mW (12637) sensor_bridge: Length error on received frame (count=1)[0m
+[0;33mW (16127) sensor_bridge: Length error on received frame (count=2)[0m
+[0;33mW (16127) sensor_bridge: Length error on received frame (count=3)[0m
+[0;33mW (17487) sensor_bridge: Length error on received frame (count=4)[0m
+[0;33mW (18687) sensor_bridge: Length error on received frame (count=5)[0m
+[0;33mW (18687) sensor_bridge: Length error on received frame (count=6)[0m
+[0;33mW (20867) sensor_bridge: Length error on received frame (count=7)[0m
+[0;33mW (20867) sensor_bridge: Length error on received frame (count=8)[0m
+[0;33mW (27007) sensor_bridge: Length error on received frame (count=9)[0m
+[0;33mW (28927) sensor_bridge: Length error on received frame (count=10)[0m
+[0;33mW (30547) sensor_bridge: Length error on received frame (count=11)[0m
+[0;32mI (91247) sensor_bridge: Published: {"sensor_id":1,"ts_ms":101,"temperature_c":45.4654541015625,"vibration_rms_g":0.5787599682807922,"pressure_kpa":101.221923828125,"anomaly_score":0,"is_anomaly":false}[0m
+[0;32mI (92587) sensor_bridge: Published: {"sensor_id":1,"ts_ms":1436,"temperature_c":45.64986038208008,"vibration_rms_g":0.747301995754242,"pressure_kpa":101.14769744873047,"anomaly_score":0,"is_anomaly":false}[0m
+[0;32mI (93927) sensor_bridge: Published: {"sensor_id":1,"ts_ms":2771,"temperature_c":45.29961013793945,"vibration_rms_g":0.747301995754242,"pressure_kpa":101.30587005615234,"anomaly_score":0,"is_anomaly":false}[0m
+[0;32mI (95267) sensor_bridge: Published: {"sensor_id":1,"ts_ms":4106,"temperature_c":45.68199157714844,"vibration_rms_g":0.747301995754242,"pressure_kpa":101.26297760009766,"anomaly_score":0,"is_anomaly":false}[0m
+[0;32mI (96607) sensor_bridge: Published: {"sensor_id":1,"ts_ms":5441,"temperature_c":44.769126892089844,"vibration_rms_g":0.747301995754242,"pressure_kpa":101.26966857910156,"anomaly_score":0,"is_anomaly":false}[0m
+[0;32mI (97947) sensor_bridge: Published: {"sensor_id":1,"ts_ms":6776,"temperature_c":46.600059509277344,"vibration_rms_g":0.747301995754242,"pressure_kpa":101.1940689086914,"anomaly_score":0,"is_anomaly":false}[0m
+[0;32mI (99287) sensor_bridge: Published: {"sensor_id":1,"ts_ms":8111,"temperature_c":45.14056396484375,"vibration_rms_g":0.747301995754242,"pressure_kpa":101.38739776611328,"anomaly_score":0,"is_anomaly":false}[0m
+[0;32mI (100627) sensor_bridge: Published: {"sensor_id":1,"ts_ms":9446,"temperature_c":46.7394676208496,"vibration_rms_g":0.747301995754242,"pressure_kpa":101.53009033203125,"anomaly_score":0,"is_anomaly":false}[0m
+[0;32mI (101967) sensor_bridge: Published: {"sensor_id":1,"ts_ms":10781,"temperature_c":46.895050048828125,"vibration_rms_g":0.747301995754242,"pressure_kpa":101.32565307617188,"anomaly_score":0,"is_anomaly":false}[0m
+[0;32mI (103307) sensor_bridge: Published: {"sensor_id":1,"ts_ms":12116,"temperature_c":46.2324447631836,"vibration_rms_g":0.747301995754242,"pressure_kpa":101.39513397216797,"anomaly_score":0.052790217101573944,"is_anomaly":false}[0m
+[0;32mI (104657) sensor_bridge: Published: {"sensor_id":1,"ts_ms":13453,"temperature_c":45.4869270324707,"vibration_rms_g":0.053181178867816925,"pressure_kpa":101.43148040771484,"anomaly_score":0.27808067202568054,"is_anomaly":true}[0m
+[0;33mW (104667) sensor_bridge: ANOMALY flagged (score=0.2781)[0m
+[0;32mI (105997) sensor_bridge: Published: {"sensor_id":1,"ts_ms":14790,"temperature_c":47.0065689086914,"vibration_rms_g":0.053181178867816925,"pressure_kpa":101.54668426513672,"anomaly_score":0.4870704412460327,"is_anomaly":true}[0m
+[0;33mW (106007) sensor_bridge: ANOMALY flagged (score=0.4871)[0m
+[0;32mI (107337) sensor_bridge: Published: {"sensor_id":1,"ts_ms":16127,"temperature_c":45.964630126953125,"vibration_rms_g":0.053181178867816925,"pressure_kpa":101.33802795410156,"anomaly_score":0.738598108291626,"is_anomaly":true}[0m
+[0;33mW (107347) sensor_bridge: ANOMALY flagged (score=0.7386)[0m
+[0;32mI (108687) sensor_bridge: Published: {"sensor_id":1,"ts_ms":17464,"temperature_c":47.22166442871094,"vibration_rms_g":1.094748854637146,"pressure_kpa":101.46076965332031,"anomaly_score":0.7909377813339233,"is_anomaly":true}[0m
+[0;33mW (108697) sensor_bridge: ANOMALY flagged (score=0.7909)[0m
+[0;32mI (110027) sensor_bridge: Published: {"sensor_id":1,"ts_ms":18801,"temperature_c":45.73276901245117,"vibration_rms_g":1.094748854637146,"pressure_kpa":101.1760482788086,"anomaly_score":1.0276544094085693,"is_anomaly":true}[0m
+[0;33mW (110037) sensor_bridge: ANOMALY flagged (score=1.0277)[0m
+[0;32mI (111367) sensor_bridge: Published: {"sensor_id":1,"ts_ms":20138,"temperature_c":47.67905044555664,"vibration_rms_g":1.094748854637146,"pressure_kpa":101.19120788574219,"anomaly_score":1.1099756956100464,"is_anomaly":true}[0m
+[0;33mW (111377) sensor_bridge: ANOMALY flagged (score=1.1100)[0m
+[0;32mI (112707) sensor_bridge: Published: {"sensor_id":1,"ts_ms":21475,"temperature_c":47.23932647705078,"vibration_rms_g":0.31184008717536926,"pressure_kpa":101.27793884277344,"anomaly_score":1.2187267541885376,"is_anomaly":true}[0m
+[0;33mW (112717) sensor_bridge: ANOMALY flagged (score=1.2187)[0m
+[0;32mI (114057) sensor_bridge: Published: {"sensor_id":1,"ts_ms":22812,"temperature_c":47.23097610473633,"vibration_rms_g":0.31184008717536926,"pressure_kpa":101.39067840576172,"anomaly_score":1.2849295139312744,"is_anomaly":true}[0m
+[0;33mW (114067) sensor_bridge: ANOMALY flagged (score=1.2849)[0m
+[0;32mI (115397) sensor_bridge: Published: {"sensor_id":1,"ts_ms":24149,"temperature_c":46.86711883544922,"vibration_rms_g":0.31184008717536926,"pressure_kpa":101.2625503540039,"anomaly_score":1.3440321683883667,"is_anomaly":true}[0m
+[0;33mW (115407) sensor_bridge: ANOMALY flagged (score=1.3440)[0m
+[0;32mI (116737) sensor_bridge: Published: {"sensor_id":1,"ts_ms":25486,"temperature_c":47.7244987487793,"vibration_rms_g":1.1117982864379883,"pressure_kpa":101.48104095458984,"anomaly_score":1.358826994895935,"is_anomaly":true}[0m
+[0;33mW (116747) sensor_bridge: ANOMALY flagged (score=1.3588)[0m
+[0;32mI (118077) sensor_bridge: Published: {"sensor_id":1,"ts_ms":26823,"temperature_c":46.8119239807129,"vibration_rms_g":1.1117982864379883,"pressure_kpa":101.58792114257812,"anomaly_score":1.3378167152404785,"is_anomaly":true}[0m
+[0;33mW (118087) sensor_bridge: ANOMALY flagged (score=1.3378)[0m
+[0;32mI (119417) sensor_bridge: Published: {"sensor_id":1,"ts_ms":28160,"temperature_c":48.50957489013672,"vibration_rms_g":1.1117982864379883,"pressure_kpa":101.36026763916016,"anomaly_score":1.1949480772018433,"is_anomaly":true}[0m
+[0;33mW (119427) sensor_bridge: ANOMALY flagged (score=1.1949)[0m
+[0;32mI (120767) sensor_bridge: Published: {"sensor_id":1,"ts_ms":29497,"temperature_c":48.228031158447266,"vibration_rms_g":0.794184446334839,"pressure_kpa":101.25931549072266,"anomaly_score":0.9189064502716064,"is_anomaly":true}[0m
+[0;33mW (120777) sensor_bridge: ANOMALY flagged (score=0.9189)[0m
+[0;32mI (122107) sensor_bridge: Published: {"sensor_id":1,"ts_ms":30834,"temperature_c":48.0424461364746,"vibration_rms_g":0.794184446334839,"pressure_kpa":101.43362426757812,"anomaly_score":0.8439407348632812,"is_anomaly":true}[0m
+[0;33mW (122117) sensor_bridge: ANOMALY flagged (score=0.8439)[0m
+[0;32mI (123447) sensor_bridge: Published: {"sensor_id":1,"ts_ms":32171,"temperature_c":48.42279052734375,"vibration_rms_g":0.794184446334839,"pressure_kpa":101.58043670654297,"anomaly_score":0.724704623222351,"is_anomaly":true}[0m
+[0;33mW (123457) sensor_bridge: ANOMALY flagged (score=0.7247)[0m
+[0;32mI (124787) sensor_bridge: Published: {"sensor_id":1,"ts_ms":33508,"temperature_c":47.61603927612305,"vibration_rms_g":0.5075809955596924,"pressure_kpa":101.55662536621094,"anomaly_score":0.68563973903656,"is_anomaly":true}[0m
+[0;33mW (124797) sensor_bridge: ANOMALY flagged (score=0.6856)[0m
+[0;32mI (126137) sensor_bridge: Published: {"sensor_id":1,"ts_ms":34845,"temperature_c":48.3812484741211,"vibration_rms_g":0.5075809955596924,"pressure_kpa":101.23500061035156,"anomaly_score":0.6865509152412415,"is_anomaly":true}[0m
+[0;33mW (126147) sensor_bridge: ANOMALY flagged (score=0.6866)[0m
+[0;32mI (127477) sensor_bridge: Published: {"sensor_id":1,"ts_ms":36182,"temperature_c":47.749393463134766,"vibration_rms_g":0.5075809955596924,"pressure_kpa":101.2771987915039,"anomaly_score":0.4985714554786682,"is_anomaly":true}[0m
+[0;33mW (127487) sensor_bridge: ANOMALY flagged (score=0.4986)[0m
+[0;32mI (128817) sensor_bridge: Published: {"sensor_id":1,"ts_ms":37519,"temperature_c":48.40181350708008,"vibration_rms_g":0.007724045775830746,"pressure_kpa":101.3862533569336,"anomaly_score":0.65937340259552,"is_anomaly":true}[0m
+[0;33mW (128827) sensor_bridge: ANOMALY flagged (score=0.6594)[0m
+[0;32mI (130157) sensor_bridge: Published: {"sensor_id":1,"ts_ms":38856,"temperature_c":47.265201568603516,"vibration_rms_g":0.007724045775830746,"pressure_kpa":101.564453125,"anomaly_score":0.8524810671806335,"is_anomaly":true}[0m
+[0;33mW (130167) sensor_bridge: ANOMALY flagged (score=0.8525)[0m
+[0;32mI (131507) sensor_bridge: Published: {"sensor_id":1,"ts_ms":40193,"temperature_c":47.12462615966797,"vibration_rms_g":0.007724045775830746,"pressure_kpa":101.28205108642578,"anomaly_score":1.0479919910430908,"is_anomaly":true}[0m
+[0;33mW (131517) sensor_bridge: ANOMALY flagged (score=1.0480)[0m
+[0;32mI (132847) sensor_bridge: Published: {"sensor_id":1,"ts_ms":41530,"temperature_c":47.58937072753906,"vibration_rms_g":0.2492256611585617,"pressure_kpa":101.61186981201172,"anomaly_score":0.671010971069336,"is_anomaly":true}[0m
+[0;33mW (132857) sensor_bridge: ANOMALY flagged (score=0.6710)[0m
+[0;32mI (134187) sensor_bridge: Published: {"sensor_id":1,"ts_ms":42867,"temperature_c":48.73427200317383,"vibration_rms_g":0.2492256611585617,"pressure_kpa":101.45284271240234,"anomaly_score":0.542221188545227,"is_anomaly":true}[0m
+[0;33mW (134197) sensor_bridge: ANOMALY flagged (score=0.5422)[0m
+[0;32mI (135527) sensor_bridge: Published: {"sensor_id":1,"ts_ms":44204,"temperature_c":48.30139923095703,"vibration_rms_g":0.2492256611585617,"pressure_kpa":101.30198669433594,"anomaly_score":0.4474758207798004,"is_anomaly":true}[0m
+[0;33mW (135537) sensor_bridge: ANOMALY flagged (score=0.4475)[0m
+[0;32mI (136867) sensor_bridge: Published: {"sensor_id":1,"ts_ms":45541,"temperature_c":48.6166000366211,"vibration_rms_g":0.2481425553560257,"pressure_kpa":101.39012908935547,"anomaly_score":0.22780850529670715,"is_anomaly":true}[0m
+[0;33mW (136877) sensor_bridge: ANOMALY flagged (score=0.2278)[0m
+[0;32mI (138207) sensor_bridge: Published: {"sensor_id":1,"ts_ms":46878,"temperature_c":48.46894454956055,"vibration_rms_g":0.2481425553560257,"pressure_kpa":101.32051086425781,"anomaly_score":0.1903441846370697,"is_anomaly":true}[0m
+[0;33mW (138217) sensor_bridge: ANOMALY flagged (score=0.1903)[0m
+[0;32mI (139557) sensor_bridge: Published: {"sensor_id":1,"ts_ms":48215,"temperature_c":50.25275421142578,"vibration_rms_g":0.2481425553560257,"pressure_kpa":101.5929183959961,"anomaly_score":0.17747995257377625,"is_anomaly":true}[0m
+[0;33mW (139567) sensor_bridge: ANOMALY flagged (score=0.1775)[0m
+[0;32mI (140897) sensor_bridge: Published: {"sensor_id":1,"ts_ms":49552,"temperature_c":48.7958984375,"vibration_rms_g":0.18058055639266968,"pressure_kpa":101.50697326660156,"anomaly_score":0.1573360413312912,"is_anomaly":true}[0m
+[0;33mW (140907) sensor_bridge: ANOMALY flagged (score=0.1573)[0m
+[0;32mI (142237) sensor_bridge: Published: {"sensor_id":1,"ts_ms":50889,"temperature_c":47.630340576171875,"vibration_rms_g":0.18058055639266968,"pressure_kpa":101.66957092285156,"anomaly_score":0.17520952224731445,"is_anomaly":true}[0m
+[0;33mW (142247) sensor_bridge: ANOMALY flagged (score=0.1752)[0m
+[0;32mI (143577) sensor_bridge: Published: {"sensor_id":1,"ts_ms":52226,"temperature_c":48.11723709106445,"vibration_rms_g":0.18058055639266968,"pressure_kpa":101.42969512939453,"anomaly_score":0.148010790348053,"is_anomaly":true}[0m
+[0;33mW (143587) sensor_bridge: ANOMALY flagged (score=0.1480)[0m
+[0;32mI (144927) sensor_bridge: Published: {"sensor_id":1,"ts_ms":53563,"temperature_c":49.95332717895508,"vibration_rms_g":0.1242799237370491,"pressure_kpa":101.582763671875,"anomaly_score":0.0844797194004059,"is_anomaly":false}[0m
+[0;32mI (146267) sensor_bridge: Published: {"sensor_id":1,"ts_ms":54900,"temperature_c":50.26975631713867,"vibration_rms_g":0.1242799237370491,"pressure_kpa":101.37252044677734,"anomaly_score":0.08456891030073166,"is_anomaly":false}[0m
+[0;32mI (147607) sensor_bridge: Published: {"sensor_id":1,"ts_ms":56237,"temperature_c":49.93266677856445,"vibration_rms_g":0.1242799237370491,"pressure_kpa":101.32476806640625,"anomaly_score":0.08138809353113174,"is_anomaly":false}[0m
+[0;32mI (148947) sensor_bridge: Published: {"sensor_id":1,"ts_ms":57574,"temperature_c":50.87158203125,"vibration_rms_g":1.0416254997253418,"pressure_kpa":101.32061767578125,"anomaly_score":0.3959116041660309,"is_anomaly":true}[0m
+[0;33mW (148957) sensor_bridge: ANOMALY flagged (score=0.3959)[0m
+[0;32mI (150287) sensor_bridge: Published: {"sensor_id":1,"ts_ms":58911,"temperature_c":48.4371452331543,"vibration_rms_g":1.0416254997253418,"pressure_kpa":101.71076965332031,"anomaly_score":0.511650800704956,"is_anomaly":true}[0m
+[0;33mW (150297) sensor_bridge: ANOMALY flagged (score=0.5117)[0m
+[0;32mI (151637) sensor_bridge: Published: {"sensor_id":1,"ts_ms":60248,"temperature_c":50.04124450683594,"vibration_rms_g":1.0416254997253418,"pressure_kpa":101.33316040039062,"anomaly_score":0.4835236668586731,"is_anomaly":true}[0m
+[0;33mW (151647) sensor_bridge: ANOMALY flagged (score=0.4835)[0m
+[0;32mI (152977) sensor_bridge: Published: {"sensor_id":1,"ts_ms":61585,"temperature_c":48.78809356689453,"vibration_rms_g":0.24761900305747986,"pressure_kpa":101.57766723632812,"anomaly_score":0.7843560576438904,"is_anomaly":true}[0m
+[0;33mW (152987) sensor_bridge: ANOMALY flagged (score=0.7844)[0m
+[0;32mI (154317) sensor_bridge: Published: {"sensor_id":1,"ts_ms":62922,"temperature_c":48.58714294433594,"vibration_rms_g":0.24761900305747986,"pressure_kpa":101.69007873535156,"anomaly_score":1.0579808950424194,"is_anomaly":true}[0m
+[0;33mW (154327) sensor_bridge: ANOMALY flagged (score=1.0580)[0m
+[0;32mI (155657) sensor_bridge: Published: {"sensor_id":1,"ts_ms":64259,"temperature_c":49.476722717285156,"vibration_rms_g":0.24761900305747986,"pressure_kpa":101.67581176757812,"anomaly_score":1.2071642875671387,"is_anomaly":true}[0m
+[0;33mW (155667) sensor_bridge: ANOMALY flagged (score=1.2072)[0m
+[0;32mI (156997) sensor_bridge: Published: {"sensor_id":1,"ts_ms":65596,"temperature_c":49.69899368286133,"vibration_rms_g":0.00900894310325384,"pressure_kpa":101.40067291259766,"anomaly_score":1.37388277053833,"is_anomaly":true}[0m
+[0;33mW (157007) sensor_bridge: ANOMALY flagged (score=1.3739)[0m
+[0;32mI (158347) sensor_bridge: Published: {"sensor_id":1,"ts_ms":66933,"temperature_c":50.58757400512695,"vibration_rms_g":0.00900894310325384,"pressure_kpa":101.34119415283203,"anomaly_score":1.2411506175994873,"is_anomaly":true}[0m
+[0;33mW (158357) sensor_bridge: ANOMALY flagged (score=1.2412)[0m
+[0;32mI (159687) sensor_bridge: Published: {"sensor_id":1,"ts_ms":68270,"temperature_c":50.67256164550781,"vibration_rms_g":0.00900894310325384,"pressure_kpa":101.46134948730469,"anomaly_score":1.13680100440979,"is_anomaly":true}[0m
+[0;33mW (159697) sensor_bridge: ANOMALY flagged (score=1.1368)[0m
+[0;32mI (161027) sensor_bridge: Published: {"sensor_id":1,"ts_ms":69607,"temperature_c":48.70743942260742,"vibration_rms_g":0.24513694643974304,"pressure_kpa":101.4356918334961,"anomaly_score":1.1410129070281982,"is_anomaly":true}[0m
+[0;33mW (161037) sensor_bridge: ANOMALY flagged (score=1.1410)[0m
+[0;32mI (162367) sensor_bridge: Published: {"sensor_id":1,"ts_ms":70944,"temperature_c":49.69911575317383,"vibration_rms_g":0.24513694643974304,"pressure_kpa":101.45011138916016,"anomaly_score":0.7318087220191956,"is_anomaly":true}[0m
+[0;33mW (162377) sensor_bridge: ANOMALY flagged (score=0.7318)[0m
+[0;32mI (163707) sensor_bridge: Published: {"sensor_id":1,"ts_ms":72281,"temperature_c":50.60261535644531,"vibration_rms_g":0.24513694643974304,"pressure_kpa":101.64263916015625,"anomaly_score":0.380776733160019,"is_anomaly":true}[0m
+[0;33mW (163717) sensor_bridge: ANOMALY flagged (score=0.3808)[0m
+[0;32mI (165057) sensor_bridge: Published: {"sensor_id":1,"ts_ms":73618,"temperature_c":49.24986267089844,"vibration_rms_g":0.03914333134889603,"pressure_kpa":101.44519805908203,"anomaly_score":0.12438849359750748,"is_anomaly":true}[0m
+[0;33mW (165067) sensor_bridge: ANOMALY flagged (score=0.1244)[0m
+[0;32mI (166397) sensor_bridge: Published: {"sensor_id":1,"ts_ms":74955,"temperature_c":50.44406509399414,"vibration_rms_g":0.03914333134889603,"pressure_kpa":101.60557556152344,"anomaly_score":0.14884063601493835,"is_anomaly":true}[0m
+[0;33mW (166407) sensor_bridge: ANOMALY flagged (score=0.1488)[0m
+[0;32mI (167737) sensor_bridge: Published: {"sensor_id":1,"ts_ms":76292,"temperature_c":51.088340759277344,"vibration_rms_g":0.03914333134889603,"pressure_kpa":101.45564270019531,"anomaly_score":0.17219118773937225,"is_anomaly":true}[0m
+[0;33mW (167747) sensor_bridge: ANOMALY flagged (score=0.1722)[0m
+[0;32mI (169077) sensor_bridge: Published: {"sensor_id":1,"ts_ms":77629,"temperature_c":48.8639259338379,"vibration_rms_g":0.22120758891105652,"pressure_kpa":101.59718322753906,"anomaly_score":0.16681060194969177,"is_anomaly":true}[0m
+[0;33mW (169087) sensor_bridge: ANOMALY flagged (score=0.1668)[0m
+[0;32mI (170417) sensor_bridge: Published: {"sensor_id":1,"ts_ms":78966,"temperature_c":51.439903259277344,"vibration_rms_g":0.22120758891105652,"pressure_kpa":101.55076599121094,"anomaly_score":0.14781616628170013,"is_anomaly":true}[0m
+[0;33mW (170427) sensor_bridge: ANOMALY flagged (score=0.1478)[0m
+[0;32mI (171767) sensor_bridge: Published: {"sensor_id":1,"ts_ms":80303,"temperature_c":49.62199783325195,"vibration_rms_g":0.22120758891105652,"pressure_kpa":101.40646362304688,"anomaly_score":0.11223843693733215,"is_anomaly":true}[0m
+[0;33mW (171777) sensor_bridge: ANOMALY flagged (score=0.1122)[0m
+[0;32mI (173107) sensor_bridge: Published: {"sensor_id":1,"ts_ms":81640,"temperature_c":49.35150909423828,"vibration_rms_g":0.23163701593875885,"pressure_kpa":101.67660522460938,"anomaly_score":0.0661410540342331,"is_anomaly":false}[0m
+[0;32mI (174447) sensor_bridge: Published: {"sensor_id":1,"ts_ms":82977,"temperature_c":49.16578674316406,"vibration_rms_g":0.23163701593875885,"pressure_kpa":101.53124237060547,"anomaly_score":0.07126901298761368,"is_anomaly":false}[0m
+[0;32mI (175787) sensor_bridge: Published: {"sensor_id":1,"ts_ms":84314,"temperature_c":49.77198791503906,"vibration_rms_g":0.23163701593875885,"pressure_kpa":101.54650115966797,"anomaly_score":0.07904215157032013,"is_anomaly":false}[0m
+[0;32mI (177137) sensor_bridge: Published: {"sensor_id":1,"ts_ms":85651,"temperature_c":50.86386489868164,"vibration_rms_g":0.265101045370102,"pressure_kpa":101.76361846923828,"anomaly_score":0.10015282034873962,"is_anomaly":false}[0m
+[0;32mI (178477) sensor_bridge: Published: {"sensor_id":1,"ts_ms":86988,"temperature_c":50.3840446472168,"vibration_rms_g":0.265101045370102,"pressure_kpa":101.59333801269531,"anomaly_score":0.103579081594944,"is_anomaly":false}[0m
+[0;32mI (179817) sensor_bridge: Published: {"sensor_id":1,"ts_ms":88325,"temperature_c":50.19453048706055,"vibration_rms_g":0.265101045370102,"pressure_kpa":101.65597534179688,"anomaly_score":0.08550897240638733,"is_anomaly":false}[0m
+[0;32mI (181157) sensor_bridge: Published: {"sensor_id":1,"ts_ms":89662,"temperature_c":50.71967315673828,"vibration_rms_g":0.5081105828285217,"pressure_kpa":101.7711410522461,"anomaly_score":0.0560528039932251,"is_anomaly":false}[0m
+[0;32mI (182507) sensor_bridge: Published: {"sensor_id":1,"ts_ms":90999,"temperature_c":49.67075729370117,"vibration_rms_g":0.5081105828285217,"pressure_kpa":101.554931640625,"anomaly_score":0.05558262765407562,"is_anomaly":false}[0m
+[0;32mI (183847) sensor_bridge: Published: {"sensor_id":1,"ts_ms":92336,"temperature_c":48.58999252319336,"vibration_rms_g":0.5081105828285217,"pressure_kpa":101.59320068359375,"anomaly_score":0.04630409926176071,"is_anomaly":false}[0m
+[0;32mI (185187) sensor_bridge: Published: {"sensor_id":1,"ts_ms":93673,"temperature_c":49.78260040283203,"vibration_rms_g":1.0039318799972534,"pressure_kpa":101.49068450927734,"anomaly_score":0.11877045780420303,"is_anomaly":true}[0m
+[0;33mW (185197) sensor_bridge: ANOMALY flagged (score=0.1188)[0m
+[0;32mI (186527) sensor_bridge: Published: {"sensor_id":1,"ts_ms":95010,"temperature_c":50.360652923583984,"vibration_rms_g":1.0039318799972534,"pressure_kpa":101.79462432861328,"anomaly_score":0.12975400686264038,"is_anomaly":true}[0m
+[0;33mW (186537) sensor_bridge: ANOMALY flagged (score=0.1298)[0m
+[0;32mI (187877) sensor_bridge: Published: {"sensor_id":1,"ts_ms":96347,"temperature_c":50.7386245727539,"vibration_rms_g":1.0039318799972534,"pressure_kpa":101.80946350097656,"anomaly_score":0.1150459572672844,"is_anomaly":true}[0m
+[0;33mW (187887) sensor_bridge: ANOMALY flagged (score=0.1150)[0m
+[0;32mI (189217) sensor_bridge: Published: {"sensor_id":1,"ts_ms":97684,"temperature_c":51.10448455810547,"vibration_rms_g":0.018557071685791016,"pressure_kpa":101.80643463134766,"anomaly_score":0.739611566066742,"is_anomaly":true}[0m
+[0;33mW (189227) sensor_bridge: ANOMALY flagged (score=0.7396)[0m
+[0;32mI (190557) sensor_bridge: Published: {"sensor_id":1,"ts_ms":99021,"temperature_c":50.2874870300293,"vibration_rms_g":0.018557071685791016,"pressure_kpa":101.63629150390625,"anomaly_score":1.045342206954956,"is_anomaly":true}[0m
+[0;33mW (190567) sensor_bridge: ANOMALY flagged (score=1.0453)[0m
+[0;32mI (191907) sensor_bridge: Published: {"sensor_id":1,"ts_ms":100358,"temperature_c":50.16190719604492,"vibration_rms_g":0.018557071685791016,"pressure_kpa":101.82901000976562,"anomaly_score":1.1025561094284058,"is_anomaly":true}[0m
+[0;33mW (191917) sensor_bridge: ANOMALY flagged (score=1.1026)[0m
+[0;32mI (193247) sensor_bridge: Published: {"sensor_id":1,"ts_ms":101695,"temperature_c":48.40013885498047,"vibration_rms_g":0.2498142421245575,"pressure_kpa":101.45584869384766,"anomaly_score":0.9249738454818726,"is_anomaly":true}[0m
+[0;33mW (193257) sensor_bridge: ANOMALY flagged (score=0.9250)[0m
+[0;32mI (194587) sensor_bridge: Published: {"sensor_id":1,"ts_ms":103032,"temperature_c":49.14130401611328,"vibration_rms_g":0.2498142421245575,"pressure_kpa":101.69215393066406,"anomaly_score":0.8655380606651306,"is_anomaly":true}[0m
+[0;33mW (194597) sensor_bridge: ANOMALY flagged (score=0.8655)[0m
+[0;32mI (195927) sensor_bridge: Published: {"sensor_id":1,"ts_ms":104369,"temperature_c":50.09569549560547,"vibration_rms_g":0.2498142421245575,"pressure_kpa":101.49871063232422,"anomaly_score":0.8592999577522278,"is_anomaly":true}[0m
+[0;33mW (195937) sensor_bridge: ANOMALY flagged (score=0.8593)[0m
+[0;32mI (197267) sensor_bridge: Published: {"sensor_id":1,"ts_ms":105706,"temperature_c":49.8896827697754,"vibration_rms_g":0.44190356135368347,"pressure_kpa":101.68944549560547,"anomaly_score":0.7716025114059448,"is_anomaly":true}[0m
+[0;33mW (197277) sensor_bridge: ANOMALY flagged (score=0.7716)[0m
+[0;32mI (198617) sensor_bridge: Published: {"sensor_id":1,"ts_ms":107043,"temperature_c":50.1902847290039,"vibration_rms_g":0.44190356135368347,"pressure_kpa":101.82067108154297,"anomaly_score":0.6808988451957703,"is_anomaly":true}[0m
+[0;33mW (198627) sensor_bridge: ANOMALY flagged (score=0.6809)[0m
+[0;32mI (199957) sensor_bridge: Published: {"sensor_id":1,"ts_ms":108380,"temperature_c":50.46561813354492,"vibration_rms_g":0.44190356135368347,"pressure_kpa":101.57427978515625,"anomaly_score":0.510480761528015,"is_anomaly":true}[0m
+[0;33mW (199967) sensor_bridge: ANOMALY flagged (score=0.5105)[0m
+[0;32mI (201297) sensor_bridge: Published: {"sensor_id":1,"ts_ms":109717,"temperature_c":48.25148010253906,"vibration_rms_g":0.0525815598666668,"pressure_kpa":101.7623519897461,"anomaly_score":0.26515284180641174,"is_anomaly":true}[0m
+[0;33mW (201307) sensor_bridge: ANOMALY flagged (score=0.2652)[0m
+[0;32mI (202637) sensor_bridge: Published: {"sensor_id":1,"ts_ms":111054,"temperature_c":50.64497756958008,"vibration_rms_g":0.0525815598666668,"pressure_kpa":101.70511627197266,"anomaly_score":0.3439179062843323,"is_anomaly":true}[0m
+[0;33mW (202647) sensor_bridge: ANOMALY flagged (score=0.3439)[0m
+[0;32mI (203987) sensor_bridge: Published: {"sensor_id":1,"ts_ms":112391,"temperature_c":50.5385513305664,"vibration_rms_g":0.0525815598666668,"pressure_kpa":101.47698974609375,"anomaly_score":0.3595147728919983,"is_anomaly":true}[0m
+[0;33mW (203997) sensor_bridge: ANOMALY flagged (score=0.3595)[0m
+[0;32mI (205327) sensor_bridge: Published: {"sensor_id":1,"ts_ms":113728,"temperature_c":49.99161911010742,"vibration_rms_g":0.2083899974822998,"pressure_kpa":101.72746276855469,"anomaly_score":0.23090766370296478,"is_anomaly":true}[0m
+[0;33mW (205337) sensor_bridge: ANOMALY flagged (score=0.2309)[0m
+[0;32mI (206667) sensor_bridge: Published: {"sensor_id":1,"ts_ms":115065,"temperature_c":50.21089172363281,"vibration_rms_g":0.2083899974822998,"pressure_kpa":101.61351776123047,"anomaly_score":0.18786898255348206,"is_anomaly":true}[0m
+[0;33mW (206677) sensor_bridge: ANOMALY flagged (score=0.1879)[0m
+[0;32mI (208007) sensor_bridge: Published: {"sensor_id":1,"ts_ms":116402,"temperature_c":50.023433685302734,"vibration_rms_g":0.2083899974822998,"pressure_kpa":101.5801010131836,"anomaly_score":0.14695408940315247,"is_anomaly":true}[0m
+[0;33mW (208017) sensor_bridge: ANOMALY flagged (score=0.1470)[0m
+[0;32mI (209357) sensor_bridge: Published: {"sensor_id":1,"ts_ms":117739,"temperature_c":47.58477783203125,"vibration_rms_g":0.0651155635714531,"pressure_kpa":101.84272003173828,"anomaly_score":0.1335800141096115,"is_anomaly":true}[0m
+[0;33mW (209367) sensor_bridge: ANOMALY flagged (score=0.1336)[0m
+[0;32mI (210697) sensor_bridge: Published: {"sensor_id":1,"ts_ms":119076,"temperature_c":49.50535202026367,"vibration_rms_g":0.0651155635714531,"pressure_kpa":101.81300354003906,"anomaly_score":0.15471360087394714,"is_anomaly":true}[0m
+[0;33mW (210707) sensor_bridge: ANOMALY flagged (score=0.1547)[0m
+[0;32mI (212037) sensor_bridge: Published: {"sensor_id":1,"ts_ms":120413,"temperature_c":47.72050476074219,"vibration_rms_g":0.0651155635714531,"pressure_kpa":101.51383209228516,"anomaly_score":0.16105343401432037,"is_anomaly":true}[0m
+[0;33mW (212047) sensor_bridge: ANOMALY flagged (score=0.1611)[0m
+[0;33mW (215637) sensor_bridge: Length error on received frame (count=12)[0m
+[0;33mW (217317) sensor_bridge: Length error on received frame (count=13)[0m
+[0;33mW (220757) sensor_bridge: Length error on received frame (count=14)[0m
+[0;33mW (348337) sensor_bridge: Length error on received frame (count=15)[0m
+[0;33mW (369057) sensor_bridge: Length error on received frame (count=16)[0m
+[0;33mW (371277) sensor_bridge: Length error on received frame (count=17)[0m
+[0;33mW (373497) sensor_bridge: Length error on received frame (count=18)[0m
+[0;33mW (375627) sensor_bridge: Length error on received frame (count=19)[0m
+[0;33mW (377647) sensor_bridge: Length error on received frame (count=20)[0m
+[0;33mW (378787) sensor_bridge: Length error on received frame (count=21)[0m
+[0;33mW (379967) sensor_bridge: Length error on received frame (count=22)[0m
+[0;33mW (382647) sensor_bridge: Length error on received frame (count=23)[0m
+[0;33mW (384387) sensor_bridge: Length error on received frame (count=24)[0m
+[0;33mW (385547) sensor_bridge: Length error on received frame (count=25)[0m
+[0;33mW (387527) sensor_bridge: Length error on received frame (count=26)[0m
+[0;33mW (395367) sensor_bridge: Length error on received frame (count=27)[0m
+[0;33mW (401207) sensor_bridge: Length error on received frame (count=28)[0m
+[0;33mW (401767) sensor_bridge: Length error on received frame (count=29)[0m
+[0;33mW (403147) sensor_bridge: Length error on received frame (count=30)[0m
+[0;33mW (403147) sensor_bridge: Length error on received frame (count=31)[0m
+[0;33mW (415997) sensor_bridge: Length error on received frame (count=32)[0m
+[0;33mW (417837) sensor_bridge: Length error on received frame (count=33)[0m
+[0;33mW (517517) sensor_bridge: Length error on received frame (count=34)[0m
+[0;33mW (517797) sensor_bridge: Length error on received frame (count=35)[0m
+[0;33mW (518457) sensor_bridge: Length error on received frame (count=36)[0m
+[0;33mW (518457) sensor_bridge: Length error on received frame (count=37)[0m
+[0;33mW (533967) sensor_bridge: Length error on received frame (count=38)[0m
+[0;33mW (537757) sensor_bridge: Length error on received frame (count=39)[0m
+[0;32mI (634517) sensor_bridge: Published: {"sensor_id":1,"ts_ms":26,"temperature_c":45.4654541015625,"vibration_rms_g":0.5787599682807922,"pressure_kpa":101.221923828125,"anomaly_score":0,"is_anomaly":false}[0m
+[0;32mI (635857) sensor_bridge: Published: {"sensor_id":1,"ts_ms":1361,"temperature_c":45.64986038208008,"vibration_rms_g":0.747301995754242,"pressure_kpa":101.14769744873047,"anomaly_score":0,"is_anomaly":false}[0m
+[0;32mI (637197) sensor_bridge: Published: {"sensor_id":1,"ts_ms":2696,"temperature_c":45.29961013793945,"vibration_rms_g":0.747301995754242,"pressure_kpa":101.30587005615234,"anomaly_score":0,"is_anomaly":false}[0m
+[0;32mI (638537) sensor_bridge: Published: {"sensor_id":1,"ts_ms":4031,"temperature_c":45.68199157714844,"vibration_rms_g":0.747301995754242,"pressure_kpa":101.26297760009766,"anomaly_score":0,"is_anomaly":false}[0m
+[0;32mI (639877) sensor_bridge: Published: {"sensor_id":1,"ts_ms":5366,"temperature_c":44.769126892089844,"vibration_rms_g":0.747301995754242,"pressure_kpa":101.26966857910156,"anomaly_score":0,"is_anomaly":false}[0m
+[0;32mI (641217) sensor_bridge: Published: {"sensor_id":1,"ts_ms":6701,"temperature_c":46.600059509277344,"vibration_rms_g":0.747301995754242,"pressure_kpa":101.1940689086914,"anomaly_score":0,"is_anomaly":false}[0m
+[0;32mI (642557) sensor_bridge: Published: {"sensor_id":1,"ts_ms":8036,"temperature_c":45.14056396484375,"vibration_rms_g":0.747301995754242,"pressure_kpa":101.38739776611328,"anomaly_score":0,"is_anomaly":false}[0m
+[0;32mI (643897) sensor_bridge: Published: {"sensor_id":1,"ts_ms":9371,"temperature_c":46.7394676208496,"vibration_rms_g":0.747301995754242,"pressure_kpa":101.53009033203125,"anomaly_score":0,"is_anomaly":false}[0m
+[0;32mI (645227) sensor_bridge: Published: {"sensor_id":1,"ts_ms":10706,"temperature_c":46.895050048828125,"vibration_rms_g":0.747301995754242,"pressure_kpa":101.32565307617188,"anomaly_score":0,"is_anomaly":false}[0m
+[0;32mI (646567) sensor_bridge: Published: {"sensor_id":1,"ts_ms":12041,"temperature_c":46.2324447631836,"vibration_rms_g":0.747301995754242,"pressure_kpa":101.39513397216797,"anomaly_score":0.052790217101573944,"is_anomaly":false}[0m
+[0;32mI (647917) sensor_bridge: Published: {"sensor_id":1,"ts_ms":13378,"temperature_c":45.4869270324707,"vibration_rms_g":0.053181178867816925,"pressure_kpa":101.43148040771484,"anomaly_score":0.27808067202568054,"is_anomaly":true}[0m
+[0;33mW (647927) sensor_bridge: ANOMALY flagged (score=0.2781)[0m
+[0;32mI (649257) sensor_bridge: Published: {"sensor_id":1,"ts_ms":14715,"temperature_c":47.0065689086914,"vibration_rms_g":0.053181178867816925,"pressure_kpa":101.54668426513672,"anomaly_score":0.4870704412460327,"is_anomaly":true}[0m
+[0;33mW (649267) sensor_bridge: ANOMALY flagged (score=0.4871)[0m
+[0;32mI (650597) sensor_bridge: Published: {"sensor_id":1,"ts_ms":16052,"temperature_c":45.964630126953125,"vibration_rms_g":0.053181178867816925,"pressure_kpa":101.33802795410156,"anomaly_score":0.738598108291626,"is_anomaly":true}[0m
+[0;33mW (650607) sensor_bridge: ANOMALY flagged (score=0.7386)[0m
+[0;32mI (651937) sensor_bridge: Published: {"sensor_id":1,"ts_ms":17389,"temperature_c":47.22166442871094,"vibration_rms_g":1.094748854637146,"pressure_kpa":101.46076965332031,"anomaly_score":0.7909377813339233,"is_anomaly":true}[0m
+[0;33mW (651947) sensor_bridge: ANOMALY flagged (score=0.7909)[0m
+[0;32mI (653277) sensor_bridge: Published: {"sensor_id":1,"ts_ms":18726,"temperature_c":45.73276901245117,"vibration_rms_g":1.094748854637146,"pressure_kpa":101.1760482788086,"anomaly_score":1.0276544094085693,"is_anomaly":true}[0m
+[0;33mW (653287) sensor_bridge: ANOMALY flagged (score=1.0277)[0m
+[0;32mI (654617) sensor_bridge: Published: {"sensor_id":1,"ts_ms":20063,"temperature_c":47.67905044555664,"vibration_rms_g":1.094748854637146,"pressure_kpa":101.19120788574219,"anomaly_score":1.1099756956100464,"is_anomaly":true}[0m
+[0;33mW (654627) sensor_bridge: ANOMALY flagged (score=1.1100)[0m
+[0;32mI (655957) sensor_bridge: Published: {"sensor_id":1,"ts_ms":21400,"temperature_c":47.23932647705078,"vibration_rms_g":0.31184008717536926,"pressure_kpa":101.27793884277344,"anomaly_score":1.2187267541885376,"is_anomaly":true}[0m
+[0;33mW (655967) sensor_bridge: ANOMALY flagged (score=1.2187)[0m
+[0;32mI (657297) sensor_bridge: Published: {"sensor_id":1,"ts_ms":22737,"temperature_c":47.23097610473633,"vibration_rms_g":0.31184008717536926,"pressure_kpa":101.39067840576172,"anomaly_score":1.2849295139312744,"is_anomaly":true}[0m
+[0;33mW (657307) sensor_bridge: ANOMALY flagged (score=1.2849)[0m
+[0;32mI (658637) sensor_bridge: Published: {"sensor_id":1,"ts_ms":24074,"temperature_
