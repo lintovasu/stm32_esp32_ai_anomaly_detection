@@ -123,8 +123,8 @@ int main(void)
 	          //frame.vibration_rms_g = 0.8f + 0.3f * sinf(t * 0.3f) + pseudo_noise(0.1f) + spike;
 	          frame.vibration_rms_g = vibration_rms_read();
 	          /* Simulated pressure: baseline 101.3 kPa, small variation */
-	          frame.pressure_kpa = 101.3f + 0.5f * sinf(t * 0.02f) + pseudo_noise(0.2f);
-
+	          //frame.pressure_kpa = 101.3f + 0.5f * sinf(t * 0.02f) + pseudo_noise(0.2f);
+            frame.pressure_kpa = 150;
 	          /* Feed the new sample into the sliding-window autoencoder.
 	           * Returns false for the first (WINDOW_SIZE - 1) samples while
 	           * the window fills; frame.anomaly_score stays 0 until then. */

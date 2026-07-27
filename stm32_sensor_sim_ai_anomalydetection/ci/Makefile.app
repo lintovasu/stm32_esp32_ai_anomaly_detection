@@ -26,14 +26,15 @@ OBJCOPY = arm-none-eabi-objcopy
 SIZE    = arm-none-eabi-size
 
 MCU_FLAGS = -mcpu=cortex-m4 -mthumb -mfpu=fpv4-sp-d16 -mfloat-abi=hard
-ROOT_DIR = .
-CUBE_DIR = Drivers
+ROOT_DIR = stm32_sensor_sim_ai_anomalydetection
+CUBE_DIR = $(ROOT_DIR)/Drivers
+
 CMSIS_INC = $(CUBE_DIR)/CMSIS/Include
 CMSIS_DEV_INC = $(CUBE_DIR)/CMSIS/Device/ST/STM32F4xx/Include
 HAL_INC = $(CUBE_DIR)/STM32F4xx_HAL_Driver/Inc
-HAL_SRC = $(CUBE_DIR)/STM32F4xx_HAL_Driver/Src
+BOOT_LOADER_INC =$(ROOT_DIR)/bootloader/Inc
 MIDDLEWARE_INC = $(ROOT_DIR)/Middlewares/ST/AI/Inc
-#MIDDLEWARE_MISC_INC = $(ROOT_DIR)/Middlewares/ST/AI/MISC/Inc
+OTA_CLIENT_INC =$(ROOT_DIR)/app_ota_client/Inc
 
 # X-CUBE-AI runtime library -- the .a file CubeIDE links in automatically
 # via project settings, which a plain Makefile has to be told about
@@ -50,16 +51,11 @@ AI_LIB_NAME ?= Net1201
 # etc). Shown here as a placeholder pattern plus the OTA client module
 # and shared flash/crc/metadata code every app build needs.
 
-APP_SRCS := $(wildcard Src/*.c) $(wildcard Core/Src/*.c)
-OTA_CLIENT_SRCS := $(wildcard app_ota_client/Src/*.c)
-STARTUP :=$(wildcard Core/Startup/*.s)
-#OTA_CLIENT_SRCS = \
-#  app_ota_client/Src/ota_receiver.c \
-#  app_ota_client/Src/ota_confirm.c \
-#  bootloader/Src/flash_metadata.c \
-#  bootloader/Src/flash_ll.c \
-#  bootloader/Src/crc32.c
-
+APP_SRCS := $(wildcard $(ROOT_DIR)/Core/Src/*.c)
+OTA_CLIENT_SRCS := $(wildcard $(ROOT_DIR)/app_ota_client/Src/*.c)
+BOOT_LOADER_SRC := $(wildcard $(ROOT_DIR)/bootloader/Src/*.c)
+HAL_SRC = $(CUBE_DIR)/STM32F4xx_HAL_Driver/Src
+STARTUP :=$(wildcard $(ROOT_DIR)/Core/Startup/*.s)
 HAL_SRCS = $(wildcard $(HAL_SRC)/*.c)
 
 SRCS = $(APP_SRCS) $(OTA_CLIENT_SRCS) $(HAL_SRCS) $(STARTUP)
@@ -67,35 +63,50 @@ SRCS = $(APP_SRCS) $(OTA_CLIENT_SRCS) $(HAL_SRCS) $(STARTUP)
 INC = \
   -Iapp_ota_client/inc \
   -Ibootloader/inc \
-  -IInc -ICore/Inc \
+  -IInc -I$(ROOT_DIR)/Core/Inc \
   -I$(CMSIS_INC) \
   -I$(CMSIS_DEV_INC) \
   -I$(HAL_INC) \
+  -I$(OTA_CLIENT_INC) \
+  -I$(BOOT_LOADER_INC) \
   -I$(MIDDLEWARE_INC) \
   -Iconfig
 
 DEFS = -DSTM32F407xx -DUSE_HAL_DRIVER -DFW_VERSION=\"$(VERSION)\" -DFW_SLOT=\"$(SLOT)\"
 
-CFLAGS = $(MCU_FLAGS) $(DEFS) $(INC) -Wall -O2 -ffunction-sections -fdata-sections -g
+CFLAGS = $(MCU_FLAGS) -std=gnu11 $(DEFS) $(INC) -Wall -O2 -ffunction-sections -fdata-sections -g
 
-# -L points the linker at the folder containing the .a file; -l links it
-# by name. -lm links the math library for sinf/sqrtf/etc used in
-# vibration_rms.c and elsewhere. Order matters less with modern ld, but
-# keep -lm last as a general habit (libraries are searched left to right
-# for unresolved symbols).
+# AI_LIB_FILE is passed directly as a link input (like an object file),
+# not via -L/-l -- see note above on why -l doesn't work for this
+# particular filename.
 LDFLAGS = $(MCU_FLAGS) -T$(LDSCRIPT) -Wl,--gc-sections -specs=nano.specs -specs=nosys.specs \
-  -L$(AI_LIB_DIR) -l$(AI_LIB_NAME) \
-  -lm
+  -L$(AI_LIB_DIR) -l$(AI_LIB_NAME)
 
 .PHONY: all clean
+
+OBJS := $(addprefix $(BUILD_DIR)/,$(notdir $(SRCS:.c=.o)))
+OBJS := $(patsubst %.s.o,%.o,$(OBJS:.s=.o))
+
+vpath %.c $(sort $(dir $(SRCS)))
+vpath %.s $(sort $(dir $(SRCS)))
 
 all: $(BUILD_DIR)/$(TARGET).bin
 
 $(BUILD_DIR):
 	mkdir -p $(BUILD_DIR)
 
-$(BUILD_DIR)/$(TARGET).elf: $(SRCS) | $(BUILD_DIR)
-	$(CC) $(CFLAGS) $(SRCS) $(LDFLAGS) -o $@
+$(BUILD_DIR)/%.o: %.c | $(BUILD_DIR)
+	$(CC) $(CFLAGS) -c $< -o $@
+
+$(BUILD_DIR)/%.o: %.s | $(BUILD_DIR)
+	$(CC) $(CFLAGS) -c $< -o $@
+
+# Link order matters here: OBJS first (they're what REFERENCE the
+# forward_lite_*/stai_network_run symbols), then AI_LIB_FILE (which
+# PROVIDES them), then -lm last. This mirrors the order your working
+# CubeIDE build used.
+$(BUILD_DIR)/$(TARGET).elf: $(OBJS)
+	$(CC) $(MCU_FLAGS) $(OBJS) $(LDFLAGS) -lm -o $@
 	$(SIZE) $@
 
 $(BUILD_DIR)/$(TARGET).bin: $(BUILD_DIR)/$(TARGET).elf
