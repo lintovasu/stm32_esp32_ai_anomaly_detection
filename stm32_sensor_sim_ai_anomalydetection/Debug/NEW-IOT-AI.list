@@ -1079,7 +1079,7 @@ int main(void)
  8000a5e:	f8c7 3015 	str.w	r3, [r7, #21]
 	          /* Simulated pressure: baseline 101.3 kPa, small variation */
 	          //frame.pressure_kpa = 101.3f + 0.5f * sinf(t * 0.02f) + pseudo_noise(0.2f);
-            frame.pressure_kpa = 100;
+            frame.pressure_kpa = 300;
  8000a62:	4b28      	ldr	r3, [pc, #160]	@ (8000b04 <main+0x130>)
  8000a64:	f8c7 3019 	str.w	r3, [r7, #25]
 	          /* Feed the new sample into the sliding-window autoencoder.
@@ -1151,7 +1151,7 @@ int main(void)
  8000afa:	bf00      	nop
  8000afc:	3d4ccccd 	.word	0x3d4ccccd
  8000b00:	42340000 	.word	0x42340000
- 8000b04:	42c80000 	.word	0x42c80000
+ 8000b04:	43960000 	.word	0x43960000
  8000b08:	20000330 	.word	0x20000330
 
 08000b0c <SystemClock_Config>:

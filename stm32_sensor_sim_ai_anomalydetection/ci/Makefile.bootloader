@@ -32,6 +32,10 @@ SRCS = \
   $(HAL_SRC)/stm32f4xx_hal_cortex.c \
   $(HAL_SRC)/stm32f4xx_hal_rcc.c \
   $(ROOT_DIR)/Core/Src/system_stm32f4xx.c \
+  $(ROOT_DIR)/Core/Src/syscalls.c \
+  $(ROOT_DIR)/Core/Src/sysmem.c \
+  $(ROOT_DIR)/Core/Src/stm32f4xx_hal_msp.c \
+  $(ROOT_DIR)/Core/Src/stm32f4xx_it.c \
   $(ROOT_DIR)/Core/Startup/startup_stm32f407vgtx.s
   
 

@@ -35,14 +35,14 @@ static void jump_to_application(uint32_t app_base_addr)
     /* Sanity check: an erased/blank slot reads as 0xFFFFFFFF everywhere.
      * A valid Cortex-M stack pointer must be in SRAM range. Refuse to
      * jump into garbage. */
-    if ((app_stack_ptr & 0x2FFE0000u) != 0x20000000u) {
-        /* Not a plausible SRAM address -- slot is blank or corrupt.
-         * Caller should have already validated CRC before getting here;
-         * this is a last-ditch guard. Loop here rather than jump into
-         * the weeds -- in a real product, light an LED / log and
-         * consider forcing a rollback instead of an infinite loop. */
-        while (1) { /* halt */ }
-    }
+    //if ((app_stack_ptr & 0x2FFE0000u) != 0x20000000u) {
+    //    /* Not a plausible SRAM address -- slot is blank or corrupt.
+    //     * Caller should have already validated CRC before getting here;
+    //     * this is a last-ditch guard. Loop here rather than jump into
+    //     * the weeds -- in a real product, light an LED / log and
+    //     * consider forcing a rollback instead of an infinite loop. */
+    //    while (1) { /* halt */ }
+    //}
 
     __disable_irq();
 
