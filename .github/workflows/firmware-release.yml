@@ -151,6 +151,6 @@ jobs:
         if: startsWith(github.ref, 'refs/tags/')
         run: |
           pip install --quiet paho-mqtt
-          python3 stm32_sensor_sim_ai_anomalydetection/ci/scripts/notify_mqtt.py \
+          python3 stm32_sensor_sim_ai_anomalydetection/ci/script/notify_mqtt.py \
             --manifest-url "https://github.com/${{ github.repository }}/releases/download/${{ github.ref_name }}/manifest.json" \
             --slot "${{ steps.slot.outputs.slot }}"
