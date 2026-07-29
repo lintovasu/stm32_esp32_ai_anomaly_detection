@@ -29,7 +29,8 @@ on:
         options:
           - A
           - B
-
+permissions:
+  contents: write
 jobs:
   build-and-release:
     runs-on: ubuntu-latest
