@@ -20,7 +20,7 @@ on:
       version:
         description: 'Version string to build (no v prefix), e.g. 1.4.0-test'
         required: true
-        default: '1.5.0'
+        default: '1.4.0'
       target_slot:
         description: 'Slot to target for the MQTT rollout trigger (only used if this run publishes a release)'
         required: true
