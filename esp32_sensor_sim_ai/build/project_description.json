@@ -1,7 +1,7 @@
 {
     "version":            "1.3",
     "project_name":       "esp32_sensor_sim",
-    "project_version":    "v1.4.0-15-g5dd56f9-dirty",
+    "project_version":    "v1.4.0-19-ge9b29b4-dirty",
     "project_path":       "C:/stm32espai_anomaly_detection/stm32_esp32_ai_anomaly_detection/esp32_sensor_sim_ai",
     "idf_path":           "C:/esp/v6.0.2/esp-idf",
     "build_dir":          "C:/stm32espai_anomaly_detection/stm32_esp32_ai_anomaly_detection/esp32_sensor_sim_ai/build",
@@ -1790,12 +1790,12 @@
             "dir": "C:/stm32espai_anomaly_detection/stm32_esp32_ai_anomaly_detection/esp32_sensor_sim_ai/main",
             "type": "LIBRARY",
             "lib": "__idf_main",
-            "reqs": [ "esp_wifi", "esp_event", "nvs_flash", "espressif__mqtt", "esp_driver_uart", "esp_netif", "esp_http_server" ],
+            "reqs": [ "esp_wifi", "esp_event", "nvs_flash", "espressif__mqtt", "esp_driver_uart", "esp_netif", "esp_http_server", "esp_http_client" ],
             "priv_reqs": [ "espressif__cjson", "espressif__mqtt" ],
             "managed_reqs": [],
             "managed_priv_reqs": [ "espressif__cjson", "espressif__mqtt" ],
             "file": "C:/stm32espai_anomaly_detection/stm32_esp32_ai_anomaly_detection/esp32_sensor_sim_ai/build/esp-idf/main/libmain.a",
-            "sources": [ "C:/stm32espai_anomaly_detection/stm32_esp32_ai_anomaly_detection/esp32_sensor_sim_ai/main/main.c", "C:/stm32espai_anomaly_detection/stm32_esp32_ai_anomaly_detection/esp32_sensor_sim_ai/main/sensor_protocol.c" ],
+            "sources": [ "C:/stm32espai_anomaly_detection/stm32_esp32_ai_anomaly_detection/esp32_sensor_sim_ai/main/main.c", "C:/stm32espai_anomaly_detection/stm32_esp32_ai_anomaly_detection/esp32_sensor_sim_ai/main/sensor_protocol.c", "C:/stm32espai_anomaly_detection/stm32_esp32_ai_anomaly_detection/esp32_sensor_sim_ai/main/ota_apply.c", "C:/stm32espai_anomaly_detection/stm32_esp32_ai_anomaly_detection/esp32_sensor_sim_ai/main/ota_crc32.c", "C:/stm32espai_anomaly_detection/stm32_esp32_ai_anomaly_detection/esp32_sensor_sim_ai/main/ota_push.c" ],
             "include_dirs": [ "." ]
         },
         "mbedtls": {
@@ -3929,7 +3929,7 @@
             "dir": "C:/stm32espai_anomaly_detection/stm32_esp32_ai_anomaly_detection/esp32_sensor_sim_ai/main",
             "source": "project_components",
             "lib": "__idf_main",
-            "reqs": [ "esp_wifi", "esp_event", "nvs_flash", "espressif__mqtt", "esp_driver_uart", "esp_netif", "esp_http_server" ],
+            "reqs": [ "esp_wifi", "esp_event", "nvs_flash", "espressif__mqtt", "esp_driver_uart", "esp_netif", "esp_http_server", "esp_http_client" ],
             "priv_reqs": [ "espressif__cjson", "espressif__mqtt" ],
             "managed_reqs": [],
             "managed_priv_reqs": [ "espressif__cjson", "espressif__mqtt" ],

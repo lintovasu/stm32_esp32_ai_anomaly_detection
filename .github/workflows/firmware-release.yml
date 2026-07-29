@@ -21,6 +21,14 @@ on:
         description: 'Version string to build (no v prefix), e.g. 1.4.0-test'
         required: true
         default: '0.0.0-test'
+      target_slot:
+        description: 'Slot to target for the MQTT rollout trigger (only used if this run publishes a release)'
+        required: true
+        default: 'B'
+        type: choice
+        options:
+          - A
+          - B
 
 jobs:
   build-and-release:
@@ -58,8 +66,8 @@ jobs:
       # (catches "someone added code that no longer fits in 32KB")
       # even though you normally don't re-flash the bootloader itself
       # per release.
-      #- name: Build bootloader
-      #  run: make -f ci/Makefile.bootloader
+      - name: Build bootloader
+        run: make -f stm32_sensor_sim_ai_anomalydetection/ci/Makefile.bootloader
 
       # --- Application, both slots ---
       - name: Build application (Slot A)
@@ -102,7 +110,7 @@ jobs:
           path: |
             build/app_slotA/firmware_v${{ steps.ver.outputs.version }}_slotA.bin
             build/app_slotB/firmware_v${{ steps.ver.outputs.version }}_slotB.bin
-            # build/bootloader/bootloader.bin
+            build/bootloader/bootloader.bin
             manifest.json
           retention-days: 14
 
@@ -113,19 +121,37 @@ jobs:
           files: |
             build/app_slotA/firmware_v${{ steps.ver.outputs.version }}_slotA.bin
             build/app_slotB/firmware_v${{ steps.ver.outputs.version }}_slotB.bin
-            # build/bootloader/bootloader.bin
+            build/bootloader/bootloader.bin
             manifest.json
           generate_release_notes: true
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
-      # --- Optional: notify your MQTT broker / trigger fleet rollout ---
-      # Left commented out since it depends on how you want rollout to
-      # work (all devices at once vs staged). Uncomment and point at
-      # your broker once you're ready to have releases auto-publish an
-      # "update available" MQTT message instead of triggering it by hand.
-      #
-      # - name: Publish update-available MQTT message
-      #   run: |
-      #     python3 ci/scripts/notify_mqtt.py \
-      #       --manifest-url "https://github.com/${{ github.repository }}/releases/download/${{ github.ref_name }}/manifest.json"
+      - name: Determine target slot
+        id: slot
+        run: |
+          if [ "${{ github.event_name }}" = "workflow_dispatch" ]; then
+            echo "slot=${{ github.event.inputs.target_slot }}" >> "$GITHUB_OUTPUT"
+          else
+            # Tag push with no explicit input -- default to B. This is the
+            # known gap flagged earlier: CI has no way to know which slot
+            # devices are actually running, so this is a fixed default
+            # until device status reporting closes that loop. Override by
+            # running this workflow manually via workflow_dispatch instead
+            # of a plain tag push when you need the other slot.
+            echo "slot=B" >> "$GITHUB_OUTPUT"
+          fi
+
+      # --- Notify devices via MQTT that an update is available ---
+      # Only fires on real releases (a version tag), never on plain
+      # pushes to main/master or manual test runs -- matches the same
+      # condition as the GitHub Release publish step above, since a
+      # rollout trigger without an actual published release would just
+      # send devices to a 404.
+      - name: Publish update-available MQTT message
+        if: startsWith(github.ref, 'refs/tags/')
+        run: |
+          pip install --quiet paho-mqtt
+          python3 stm32_sensor_sim_ai_anomalydetection/ci/scripts/notify_mqtt.py \
+            --manifest-url "https://github.com/${{ github.repository }}/releases/download/${{ github.ref_name }}/manifest.json" \
+            --slot "${{ steps.slot.outputs.slot }}"

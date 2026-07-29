@@ -15,6 +15,7 @@
 
 #include <string.h>
 #include <stdio.h>
+#include <stdlib.h>
 #include "freertos/FreeRTOS.h"
 #include "freertos/task.h"
 #include "freertos/event_groups.h"
@@ -26,6 +27,8 @@
 #include "mqtt_client.h"
 #include "cJSON.h"
 #include "sensor_protocol.h"
+#include "ota_push.h"
+#include "ota_apply.h"
 
 #define WIFI_SSID       "Vodafone-AF70"
 #define WIFI_PASS       "phBmMpGdmr4gFTdm"
@@ -33,6 +36,7 @@
 #define MQTT_TOPIC_DATA  "linto/sensors/node1/data"   // make unique to you
 #define MQTT_TOPIC_DIAG  "linto/sensors/node1/diag"
 #define MQTT_TOPIC_ALERT "linto/sensors/node1/alert"
+#define MQTT_TOPIC_OTA   "linto/sensors/node1/ota/update"  // operator publishes here to trigger an update
 
 #define UART_PORT       UART_NUM_1
 #define UART_RX_PIN     17
@@ -101,19 +105,98 @@ static void wifi_init_sta(void)
     ESP_LOGI(TAG, "WiFi connected.");
 }
 
+/* ---------------- OTA trigger (MQTT -> apply task) ---------------- */
+
+/* Heap-allocated so it survives past the MQTT event callback that
+ * creates it -- the callback's own event_data buffer is transient and
+ * must not be referenced after the handler returns. Freed by the task
+ * itself once done. */
+typedef struct {
+    char manifest_url[256];
+    char slot[2];
+} ota_trigger_params_t;
+
+static void ota_apply_task(void *pvParameters)
+{
+    ota_trigger_params_t *params = (ota_trigger_params_t *)pvParameters;
+
+    ESP_LOGI(TAG, "OTA triggered: manifest=%s slot=%s", params->manifest_url, params->slot);
+    bool ok = ota_apply_from_manifest(params->manifest_url, params->slot);
+    ESP_LOGI(TAG, "OTA %s", ok ? "SUCCEEDED" : "FAILED");
+
+    free(params);
+    vTaskDelete(NULL);
+}
+
+/* Expects a JSON payload like:
+ *   {"manifest_url": "https://.../releases/download/v1.4.0/manifest.json", "slot": "B"}
+ * 'slot' should be whichever slot the STM32 is currently NOT running --
+ * see the earlier discussion on tracking that via device status
+ * reporting; for now this is operator-supplied. */
+static void handle_ota_trigger(const char *data, int data_len)
+{
+    char *json_str = malloc(data_len + 1);
+    if (!json_str) return;
+    memcpy(json_str, data, data_len);
+    json_str[data_len] = '\0';
+
+    cJSON *root = cJSON_Parse(json_str);
+    free(json_str);
+    if (!root) {
+        ESP_LOGE(TAG, "OTA trigger: invalid JSON");
+        return;
+    }
+
+    cJSON *url_item  = cJSON_GetObjectItem(root, "manifest_url");
+    cJSON *slot_item = cJSON_GetObjectItem(root, "slot");
+
+    if (!cJSON_IsString(url_item) || !cJSON_IsString(slot_item)) {
+        ESP_LOGE(TAG, "OTA trigger: missing manifest_url or slot");
+        cJSON_Delete(root);
+        return;
+    }
+
+    ota_trigger_params_t *params = malloc(sizeof(ota_trigger_params_t));
+    if (!params) {
+        cJSON_Delete(root);
+        return;
+    }
+    strncpy(params->manifest_url, url_item->valuestring, sizeof(params->manifest_url) - 1);
+    params->manifest_url[sizeof(params->manifest_url) - 1] = '\0';
+    strncpy(params->slot, slot_item->valuestring, sizeof(params->slot) - 1);
+    params->slot[sizeof(params->slot) - 1] = '\0';
+
+    cJSON_Delete(root);
+
+    /* Larger stack than the default -- HTTP client + TLS + mbedtls
+     * SHA-256 use a fair amount. Runs on its own task so the download
+     * (potentially tens of seconds) never blocks the MQTT client task
+     * or uart_rx_task. */
+    xTaskCreate(ota_apply_task, "ota_apply_task", 8192, params, 5, NULL);
+}
+
 /* ---------------- MQTT ---------------- */
 
 static void mqtt_event_handler(void *handler_args, esp_event_base_t base,
                                 int32_t event_id, void *event_data)
 {
+    esp_mqtt_event_handle_t event = (esp_mqtt_event_handle_t)event_data;
+
     switch ((esp_mqtt_event_id_t)event_id) {
         case MQTT_EVENT_CONNECTED:
             ESP_LOGI(TAG, "MQTT connected to broker");
             s_mqtt_connected = true;
+            esp_mqtt_client_subscribe(s_mqtt_client, MQTT_TOPIC_OTA, 1);
             break;
         case MQTT_EVENT_DISCONNECTED:
             ESP_LOGW(TAG, "MQTT disconnected");
             s_mqtt_connected = false;
+            break;
+        case MQTT_EVENT_DATA:
+            if (event->topic_len == (int)strlen(MQTT_TOPIC_OTA) &&
+                strncmp(event->topic, MQTT_TOPIC_OTA, event->topic_len) == 0) {
+                handle_ota_trigger(event->data, event->data_len);
+            }
             break;
         case MQTT_EVENT_ERROR:
             ESP_LOGE(TAG, "MQTT error event");
@@ -204,6 +287,8 @@ static void uart_rx_task(void *arg)
 {
     uint8_t data[UART_BUF_SIZE];
     hdlc_decoder_t decoder = {0};
+    uint8_t payload[sizeof(decoder.buf)];
+    uint16_t payload_len;
     SensorFrame_t frame;
 
     TickType_t last_diag_publish = xTaskGetTickCount();
@@ -211,11 +296,22 @@ static void uart_rx_task(void *arg)
     for (;;) {
         int len = uart_read_bytes(UART_PORT, data, UART_BUF_SIZE, pdMS_TO_TICKS(200));
         for (int i = 0; i < len; i++) {
-            hdlc_result_t result = hdlc_feed_byte(&decoder, data[i], &frame);
+            hdlc_result_t result = hdlc_feed_byte(&decoder, data[i],
+                                                   payload, sizeof(payload), &payload_len);
             switch (result) {
                 case HDLC_FRAME_COMPLETE:
-                    s_frames_ok++;
-                    publish_sensor_frame(&frame);
+                    if (payload_len == SENSOR_FRAME_SIZE) {
+                        s_frames_ok++;
+                        memcpy(&frame, payload, SENSOR_FRAME_SIZE);
+                        publish_sensor_frame(&frame);
+                    } else if (payload_len == 1) {
+                        /* OTA ACK/NAK response from the STM32 -- hand
+                         * it to whichever ota_push transfer is
+                         * currently waiting for one. */
+                        ota_push_on_ack_byte(payload[0]);
+                    } else {
+                        ESP_LOGW(TAG, "unexpected frame length %u, discarding", payload_len);
+                    }
                     break;
                 case HDLC_FRAME_CRC_ERROR:
                     s_frames_crc_err++;
@@ -248,6 +344,7 @@ void app_main(void)
     ESP_ERROR_CHECK(nvs_flash_init());
 
     uart_init();
+    ota_push_init();
     wifi_init_sta();
     mqtt_init();
 
