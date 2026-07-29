@@ -53,12 +53,16 @@ AI_LIB_NAME ?= Net1201
 
 APP_SRCS := $(wildcard $(ROOT_DIR)/Core/Src/*.c)
 OTA_CLIENT_SRCS := $(wildcard $(ROOT_DIR)/app_ota_client/Src/*.c)
-BOOT_LOADER_SRC := $(wildcard $(ROOT_DIR)/bootloader/Src/*.c)
+#BOOT_LOADER_SRC := $(wildcard $(ROOT_DIR)/bootloader/Src/*.c)
 HAL_SRC = $(CUBE_DIR)/STM32F4xx_HAL_Driver/Src
 STARTUP :=$(wildcard $(ROOT_DIR)/Core/Startup/*.s)
 HAL_SRCS = $(wildcard $(HAL_SRC)/*.c)
+BOOT_LOADER_SRC = \
+  $(ROOT_DIR)/bootloader/Src/flash_metadata.c \
+  $(ROOT_DIR)/bootloader/Src/flash_ll.c \
+  $(ROOT_DIR)/bootloader/Src/crc32.c
 
-SRCS = $(APP_SRCS) $(OTA_CLIENT_SRCS) $(HAL_SRCS) $(STARTUP)
+SRCS = $(APP_SRCS) $(OTA_CLIENT_SRCS) $(BOOT_LOADER_SRC) $(HAL_SRCS) $(STARTUP)
 
 INC = \
   -Iapp_ota_client/inc \

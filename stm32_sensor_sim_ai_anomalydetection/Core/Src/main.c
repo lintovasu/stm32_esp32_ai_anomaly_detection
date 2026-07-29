@@ -22,9 +22,13 @@
 #include "ai_inference.h"
 #include <math.h>
 #include <stdlib.h>
+#include <stdbool.h>
+#include <string.h>
 #include "mpu6050.h"
 #include "vibration_rms.h"
 #include "vibration_itm_logger.h"
+#include "ota_receiver.h"
+#include "ota_confirm.h"
 /* Private typedef -----------------------------------------------------------*/
 /* USER CODE BEGIN PTD */
 
@@ -46,6 +50,20 @@ I2C_HandleTypeDef hi2c1;
 UART_HandleTypeDef huart2;
 
 /* USER CODE BEGIN PV */
+
+static hdlc_decoder_t ota_decoder;
+static uint8_t ota_rx_byte;
+
+typedef enum {
+    OTA_PENDING_NONE = 0,
+    OTA_PENDING_BEGIN,
+} ota_pending_action_t;
+
+static volatile ota_pending_action_t ota_pending_action = OTA_PENDING_NONE;
+static uint32_t ota_pending_total_size;
+
+static uint32_t ota_boot_tick;
+static bool ota_confirmed = false;
 
 /* USER CODE END PV */
 
@@ -80,7 +98,7 @@ int main(void)
 
   /* Reset of all peripherals, Initializes the Flash interface and the Systick. */
   HAL_Init();
-
+  ota_receiver_init();
   /* USER CODE BEGIN Init */
 
   /* USER CODE END Init */
@@ -100,6 +118,15 @@ int main(void)
   ai_inference_init();
   MPU6050_Init();
   itm_init();
+
+  /* OTA: initialize the HDLC decoder and start interrupt-driven
+   * single-byte UART RX so the ESP32 can send OTA command frames
+   * (BEGIN/DATA/END) asynchronously, independent of the TX-only
+   * sensor telemetry loop below. */
+  hdlc_decoder_init(&ota_decoder);
+  HAL_UART_Receive_IT(&huart2, &ota_rx_byte, 1);
+  ota_boot_tick = HAL_GetTick();
+
   uint8_t txbuf[HDLC_TX_BUF_SIZE];
   float t = 0.0f;
   /* USER CODE END 2 */
@@ -108,6 +135,30 @@ int main(void)
   /* USER CODE BEGIN WHILE */
   while (1)
   {
+	  	  	  /* OTA: handle a deferred BEGIN here in the main loop, not
+	  	  	   * inside the UART RX interrupt -- this is where the ~1s
+	  	  	   * blocking sector erase actually happens. Sensor sampling
+	  	  	   * pauses for that ~1s while this runs, which only happens
+	  	  	   * during an actual firmware update, not steady-state. */
+	  	  	  if (ota_pending_action == OTA_PENDING_BEGIN) {
+	  	  	      ota_result_t r = ota_receiver_begin(ota_pending_total_size);
+	  	  	      uint8_t resp = (r == OTA_OK) ? OTA_ACK_BYTE : OTA_NAK_BYTE;
+	  	  	      uint8_t ackbuf[8];
+	  	  	      uint16_t acklen = hdlc_encode_raw(&resp, 1, ackbuf, sizeof(ackbuf));
+	  	  	      if (acklen > 0) HAL_UART_Transmit(&huart2, ackbuf, acklen, HAL_MAX_DELAY);
+	  	  	      ota_pending_action = OTA_PENDING_NONE;
+	  	  	  }
+
+	  	  	  /* OTA: a few seconds after boot, confirm this image is good
+	  	  	   * so the bootloader stops counting boot attempts against it.
+	  	  	   * Simple time-based check for now -- tie this to a real
+	  	  	   * self-check (AI inference producing valid output, sensor
+	  	  	   * responding, etc) once you have one defined. */
+	  	  	  if (!ota_confirmed && (HAL_GetTick() - ota_boot_tick > 10000)) {
+	  	  	      ota_confirm_good();
+	  	  	      ota_confirmed = true;
+	  	  	  }
+
 	  	  	  //vibration_logging_task();
 	  	  	  SensorFrame_t frame;
 	          frame.sensor_id = SENSOR_ID;
@@ -277,6 +328,110 @@ static void MX_GPIO_Init(void)
 }
 
 /* USER CODE BEGIN 4 */
+
+/* Sends a single-byte ACK or NAK frame back to the ESP32, HDLC-framed
+ * and CRC-checked the same as everything else on this link. Used for
+ * OTA_CMD_DATA and OTA_CMD_END responses -- OTA_CMD_BEGIN's response
+ * is sent separately from the main loop instead, since it has to wait
+ * for the deferred erase to actually finish first (see main loop). */
+static void ota_send_ack(void)
+{
+    uint8_t resp = OTA_ACK_BYTE;
+    uint8_t buf[8];
+    uint16_t len = hdlc_encode_raw(&resp, 1, buf, sizeof(buf));
+    if (len > 0) HAL_UART_Transmit(&huart2, buf, len, HAL_MAX_DELAY);
+}
+
+static void ota_send_nak(void)
+{
+    uint8_t resp = OTA_NAK_BYTE;
+    uint8_t buf[8];
+    uint16_t len = hdlc_encode_raw(&resp, 1, buf, sizeof(buf));
+    if (len > 0) HAL_UART_Transmit(&huart2, buf, len, HAL_MAX_DELAY);
+}
+
+/* Called once a complete, CRC-verified OTA frame has been decoded.
+ * payload[0] is always the command byte (OTA_CMD_BEGIN/DATA/END --
+ * see ota_receiver.h). Runs in interrupt context (called from
+ * HAL_UART_RxCpltCallback below) for everything except BEGIN, whose
+ * actual erase work is deferred to the main loop since it blocks for
+ * ~1s -- far too long to spend inside an ISR. */
+static void ota_dispatch_frame(const uint8_t *payload, uint16_t len)
+{
+    if (len < 1) { ota_send_nak(); return; }
+
+    uint8_t cmd = payload[0];
+
+    switch (cmd) {
+
+    case OTA_CMD_BEGIN: {
+        if (len < 1 + sizeof(uint32_t)) { ota_send_nak(); return; }
+        uint32_t total_size;
+        memcpy(&total_size, &payload[1], sizeof(uint32_t));
+        /* Defer to main loop -- do NOT call ota_receiver_begin() here,
+         * it blocks for ~1s doing sector erase. No ACK/NAK sent yet;
+         * the main loop sends it once the erase actually completes. */
+        ota_pending_total_size = total_size;
+        ota_pending_action = OTA_PENDING_BEGIN;
+        break;
+    }
+
+    case OTA_CMD_DATA: {
+        if (len < 1 + 4 + 2) { ota_send_nak(); return; }
+        uint32_t offset;
+        uint16_t chunk_len;
+        memcpy(&offset, &payload[1], sizeof(uint32_t));
+        memcpy(&chunk_len, &payload[5], sizeof(uint16_t));
+        const uint8_t *data = &payload[7];
+
+        if (7 + chunk_len > len) { ota_send_nak(); return; }
+
+        ota_result_t r = ota_receiver_data(offset, data, chunk_len);
+        if (r == OTA_OK) ota_send_ack(); else ota_send_nak();
+        break;
+    }
+
+    case OTA_CMD_END: {
+        if (len < 1 + sizeof(uint32_t)) { ota_send_nak(); return; }
+        uint32_t crc;
+        memcpy(&crc, &payload[1], sizeof(uint32_t));
+
+        ota_result_t r = ota_receiver_end(crc);
+        if (r == OTA_OK) {
+            /* ACK first so the ESP32 knows the transfer genuinely
+             * succeeded, THEN reboot into the bootloader. */
+            ota_send_ack();
+            ota_reboot_to_apply_update(); /* never returns */
+        } else {
+            ota_send_nak();
+        }
+        break;
+    }
+
+    default:
+        ota_send_nak();
+        break;
+    }
+}
+
+/* HAL calls this once the single byte armed by HAL_UART_Receive_IT
+ * has arrived. Feed it to the HDLC decoder, dispatch a complete frame
+ * if one just finished, then immediately re-arm for the next byte --
+ * missing the re-arm would silently stop all further RX. */
+void HAL_UART_RxCpltCallback(UART_HandleTypeDef *huart)
+{
+    if (huart->Instance == USART2) {
+        int16_t result = hdlc_decoder_feed(&ota_decoder, ota_rx_byte);
+        if (result > 0) {
+            ota_dispatch_frame(ota_decoder.buf, (uint16_t)result);
+        }
+        /* result == 0: frame still in progress, nothing to do.
+         * result < 0: CRC error or overflow, decoder already reset
+         * itself -- nothing to do here either, just keep receiving. */
+
+        HAL_UART_Receive_IT(&huart2, &ota_rx_byte, 1);
+    }
+}
 
 /* USER CODE END 4 */
 

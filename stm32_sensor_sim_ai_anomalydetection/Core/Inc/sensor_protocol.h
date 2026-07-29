@@ -44,4 +44,55 @@ uint16_t crc16_ccitt(const uint8_t *data, size_t len);
  * Returns number of bytes written to 'out', or 0 on overflow. */
 uint16_t hdlc_encode_frame(const SensorFrame_t *frame, uint8_t *out, uint16_t out_size);
 
+/* ============================================================
+ * OTA additions -- generic (non-SensorFrame_t) encode/decode,
+ * used for OTA command frames in both directions (ESP32->STM32
+ * BEGIN/DATA/END, STM32->ESP32 ACK/NAK). Same FLAG/ESC framing
+ * and CRC16-CCITT as above, just over an arbitrary byte payload
+ * instead of a fixed SensorFrame_t struct.
+ * ============================================================ */
+
+/* Largest OTA payload we need to receive: 1 (cmd) + 4 (offset) +
+ * 2 (len) + up to 512 (data chunk) = 519 bytes, matching the
+ * ESP32 side's CHUNK_SIZE. Sized with margin. */
+#define HDLC_RX_BUF_SIZE 560
+
+#define OTA_ACK_BYTE 0xA5
+#define OTA_NAK_BYTE 0x5A
+
+typedef enum {
+    HDLC_DECODE_IDLE = 0,
+    HDLC_DECODE_IN_FRAME,
+    HDLC_DECODE_ESCAPED,
+} hdlc_decode_state_t;
+
+typedef struct {
+    hdlc_decode_state_t state;
+    uint8_t  buf[HDLC_RX_BUF_SIZE];
+    uint16_t idx;
+} hdlc_decoder_t;
+
+void hdlc_decoder_init(hdlc_decoder_t *dec);
+
+/* Feed one raw received byte into the decoder.
+ * Return value:
+ *   > 0  -- a complete, CRC-verified frame is ready; return value is
+ *           the payload length (CRC bytes already stripped), payload
+ *           bytes are in dec->buf[0 .. return-1]
+ *     0  -- byte consumed, frame not complete yet (normal case for
+ *           most bytes)
+ *    -1  -- frame ended but CRC check failed (frame discarded)
+ *    -2  -- payload exceeded HDLC_RX_BUF_SIZE (frame discarded,
+ *           decoder resyncs waiting for next FLAG)
+ * Caller should treat any negative return as "no valid frame,
+ * continue as normal" -- the decoder has already reset itself and
+ * is ready for the next frame. */
+int16_t hdlc_decoder_feed(hdlc_decoder_t *dec, uint8_t byte);
+
+/* Same encoding as hdlc_encode_frame but for an arbitrary payload
+ * buffer instead of a SensorFrame_t -- used for OTA ACK/NAK and any
+ * other non-telemetry frame. */
+uint16_t hdlc_encode_raw(const uint8_t *payload, uint16_t payload_len,
+                          uint8_t *out, uint16_t out_size);
+
 #endif /* SENSOR_PROTOCOL_H */
