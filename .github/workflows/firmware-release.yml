@@ -67,8 +67,8 @@ jobs:
       # (catches "someone added code that no longer fits in 32KB")
       # even though you normally don't re-flash the bootloader itself
       # per release.
-      - name: Build bootloader
-        run: make -f stm32_sensor_sim_ai_anomalydetection/ci/Makefile.bootloader
+      #- name: Build bootloader
+      #  run: make -f stm32_sensor_sim_ai_anomalydetection/ci/Makefile.bootloader
 
       # --- Application, both slots ---
       - name: Build application (Slot A)
@@ -110,7 +110,7 @@ jobs:
           name: firmware-v${{ steps.ver.outputs.version }}
           path: |
             build/app_slotA/firmware_v${{ steps.ver.outputs.version }}_slotA.bin
-            build/app_slotB/firmware_v${{ steps.ver.outputs.version }}_slotB.bin
+            # build/app_slotB/firmware_v${{ steps.ver.outputs.version }}_slotB.bin
             manifest.json
           retention-days: 14
 
