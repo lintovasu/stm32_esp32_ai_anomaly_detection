@@ -433,6 +433,26 @@ void HAL_UART_RxCpltCallback(UART_HandleTypeDef *huart)
     }
 }
 
+/* HAL calls this on any UART error (overrun, framing, noise, parity).
+ * Critically: HAL_UART_Receive_IT does NOT automatically re-arm itself
+ * after an error -- it aborts the receive and resets RxState, but
+ * never calls HAL_UART_RxCpltCallback (only a successful receive does
+ * that). Without this callback re-arming reception explicitly, a
+ * SINGLE glitch on the RX line (very plausible right at power-up, or
+ * from any electrical noise) would silently and permanently stop all
+ * future UART RX -- while TX keeps working fine, since it's a
+ * separate state machine (gState vs RxState). This exact asymmetry
+ * -- telemetry TX still flowing, RX completely dead -- is what made
+ * this bug easy to miss until an OTA command actually needed the RX
+ * path to still be alive. */
+void HAL_UART_ErrorCallback(UART_HandleTypeDef *huart)
+{
+    if (huart->Instance == USART2) {
+        __HAL_UART_CLEAR_PEFLAG(huart); /* clear parity/framing/noise/overrun flags */
+        HAL_UART_Receive_IT(&huart2, &ota_rx_byte, 1);
+    }
+}
+
 /* USER CODE END 4 */
 
 /**
