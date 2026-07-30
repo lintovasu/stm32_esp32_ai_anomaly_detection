@@ -1,0 +1,3 @@
+../bootloader/Src/flash_metadata.c:5:6:flash_metadata_read	16	static
+../bootloader/Src/flash_metadata.c:11:6:flash_metadata_write	16	static
+../bootloader/Src/flash_metadata.c:21:6:flash_metadata_init_defaults	40	static

@@ -1,0 +1,5 @@
+../bootloader/Src/crc32.c:8:13:build_table	3
+../bootloader/Src/crc32.c:20:10:crc32_init	2
+../bootloader/Src/crc32.c:26:10:crc32_update	3
+../bootloader/Src/crc32.c:35:10:crc32_finalize	1
+../bootloader/Src/crc32.c:40:10:crc32_calc	1

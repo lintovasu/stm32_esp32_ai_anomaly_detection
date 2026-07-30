@@ -73,9 +73,14 @@ static bool send_begin(uint32_t total_size)
     uint8_t buf[5];
     buf[0] = OTA_CMD_BEGIN;
     memcpy(&buf[1], &total_size, sizeof(uint32_t));
-    /* Longer timeout -- BEGIN triggers a ~1s blocking sector erase on
-     * the STM32 side before it can respond. */
-    return send_frame_and_wait(buf, sizeof(buf), 3000);
+    /* Much longer timeout than DATA/END -- BEGIN triggers a full-slot
+     * erase on the STM32 side (4 sectors: one 64KB + three 128KB for
+     * Slot A, four 128KB for Slot B), which realistically takes
+     * several seconds total, not the ~1s a single sector would take.
+     * The original 3000ms here was sized for one sector's erase time,
+     * not the whole slot -- too short, causing the STM32's genuinely
+     * valid ACK to arrive after this wait had already given up. */
+    return send_frame_and_wait(buf, sizeof(buf), 10000);
 }
 
 static bool send_data(uint32_t offset, const uint8_t *data, uint16_t len)

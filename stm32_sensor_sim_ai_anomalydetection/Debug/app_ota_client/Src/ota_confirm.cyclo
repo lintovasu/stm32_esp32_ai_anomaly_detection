@@ -1,0 +1,3 @@
+../Drivers/CMSIS/Include/core_cm4.h:1938:34:__NVIC_SystemReset	1
+../app_ota_client/Src/ota_confirm.c:11:6:ota_confirm_good	3
+../app_ota_client/Src/ota_confirm.c:34:6:ota_reboot_to_apply_update	0

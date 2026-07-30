@@ -1,0 +1,3 @@
+../bootloader/Src/flash_ll.c:4:6:flash_ll_erase_sector	3
+../bootloader/Src/flash_ll.c:23:6:flash_ll_erase_sectors	3
+../bootloader/Src/flash_ll.c:42:6:flash_ll_write	5

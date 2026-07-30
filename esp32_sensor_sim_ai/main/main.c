@@ -308,6 +308,7 @@ static void uart_rx_task(void *arg)
                         /* OTA ACK/NAK response from the STM32 -- hand
                          * it to whichever ota_push transfer is
                          * currently waiting for one. */
+                        ESP_LOGW(TAG, "OTA ACK/NAK response length = %u", payload_len);
                         ota_push_on_ack_byte(payload[0]);
                     } else {
                         ESP_LOGW(TAG, "unexpected frame length %u, discarding", payload_len);

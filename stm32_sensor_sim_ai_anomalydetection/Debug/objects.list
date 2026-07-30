@@ -28,3 +28,8 @@
 "./Drivers/STM32F4xx_HAL_Driver/Src/stm32f4xx_hal_rcc.o"
 "./Drivers/STM32F4xx_HAL_Driver/Src/stm32f4xx_hal_rcc_ex.o"
 "./Drivers/STM32F4xx_HAL_Driver/Src/stm32f4xx_hal_uart.o"
+"./app_ota_client/Src/ota_confirm.o"
+"./app_ota_client/Src/ota_receiver.o"
+"./bootloader/Src/crc32.o"
+"./bootloader/Src/flash_ll.o"
+"./bootloader/Src/flash_metadata.o"

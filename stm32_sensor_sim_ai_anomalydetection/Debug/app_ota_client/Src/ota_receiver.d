@@ -1,0 +1,9 @@
+app_ota_client/Src/ota_receiver.o: ../app_ota_client/Src/ota_receiver.c \
+ C:/stm32espai_anomaly_detection/stm32_esp32_ai_anomaly_detection/stm32_sensor_sim_ai_anomalydetection/app_ota_client/Inc/ota_receiver.h \
+ C:/stm32espai_anomaly_detection/stm32_esp32_ai_anomaly_detection/stm32_sensor_sim_ai_anomalydetection/bootloader/Inc/flash_metadata.h \
+ C:/stm32espai_anomaly_detection/stm32_esp32_ai_anomaly_detection/stm32_sensor_sim_ai_anomalydetection/bootloader/Inc/flash_ll.h \
+ C:/stm32espai_anomaly_detection/stm32_esp32_ai_anomaly_detection/stm32_sensor_sim_ai_anomalydetection/bootloader/Inc/crc32.h
+C:/stm32espai_anomaly_detection/stm32_esp32_ai_anomaly_detection/stm32_sensor_sim_ai_anomalydetection/app_ota_client/Inc/ota_receiver.h:
+C:/stm32espai_anomaly_detection/stm32_esp32_ai_anomaly_detection/stm32_sensor_sim_ai_anomalydetection/bootloader/Inc/flash_metadata.h:
+C:/stm32espai_anomaly_detection/stm32_esp32_ai_anomaly_detection/stm32_sensor_sim_ai_anomalydetection/bootloader/Inc/flash_ll.h:
+C:/stm32espai_anomaly_detection/stm32_esp32_ai_anomaly_detection/stm32_sensor_sim_ai_anomalydetection/bootloader/Inc/crc32.h:

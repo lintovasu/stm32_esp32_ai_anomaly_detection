@@ -1,0 +1,7 @@
+C:/stm32espai_anomaly_detection/stm32_esp32_ai_anomaly_detection/stm32_sensor_sim_ai_anomalydetection/bootloader/Inc/flash_metadata.h:52:24:ota_slot_base	2
+C:/stm32espai_anomaly_detection/stm32_esp32_ai_anomaly_detection/stm32_sensor_sim_ai_anomalydetection/bootloader/Inc/flash_metadata.h:56:24:ota_slot_size	2
+C:/stm32espai_anomaly_detection/stm32_esp32_ai_anomaly_detection/stm32_sensor_sim_ai_anomalydetection/bootloader/Inc/flash_metadata.h:60:26:ota_other_slot	1
+../app_ota_client/Src/ota_receiver.c:14:6:ota_receiver_init	2
+../app_ota_client/Src/ota_receiver.c:29:14:ota_receiver_begin	6
+../app_ota_client/Src/ota_receiver.c:59:14:ota_receiver_data	5
+../app_ota_client/Src/ota_receiver.c:90:14:ota_receiver_end	5
