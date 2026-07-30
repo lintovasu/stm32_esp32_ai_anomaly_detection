@@ -1,3 +1,6 @@
 ../Core/Src/sensor_protocol.c:3:10:crc16_ccitt	4
 ../Core/Src/sensor_protocol.c:19:17:stuff_byte	5
 ../Core/Src/sensor_protocol.c:32:10:hdlc_encode_frame	7
+../Core/Src/sensor_protocol.c:61:10:hdlc_encode_raw	7
+../Core/Src/sensor_protocol.c:86:6:hdlc_decoder_init	1
+../Core/Src/sensor_protocol.c:92:9:hdlc_decoder_feed	9

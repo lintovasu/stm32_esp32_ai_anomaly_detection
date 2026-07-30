@@ -25,6 +25,13 @@ static uint8_t *http_get_to_buffer(const char *url, size_t *out_len)
             via `idf.py menuconfig` -> Component config -> mbedTLS ->
             Certificate Bundle, if not already on. */
         .timeout_ms = 15000,
+        /* GitHub release downloads redirect to objects.githubusercontent.com
+         * with a long signed URL (500-1000+ chars of query string). The
+         * default 512-byte buffer is too small to build a request against
+         * that redirected URL, causing "Out of buffer" / ESP_FAIL on open.
+         * Sized with generous headroom here. */
+        .buffer_size = 2048,
+        .buffer_size_tx = 2048,
     };
 
     esp_http_client_handle_t client = esp_http_client_init(&config);
@@ -33,14 +40,53 @@ static uint8_t *http_get_to_buffer(const char *url, size_t *out_len)
         return NULL;
     }
 
-    esp_err_t err = esp_http_client_open(client, 0);
-    if (err != ESP_OK) {
-        ESP_LOGE(TAG, "http open failed: %s", esp_err_to_name(err));
+    /* GitHub release-download URLs always 302-redirect to a signed
+     * objects.githubusercontent.com URL. The manual open/fetch_headers/
+     * read flow used below does NOT follow redirects automatically the
+     * way esp_http_client_perform() does -- we have to detect a 3xx
+     * status ourselves and explicitly call esp_http_client_set_redirection()
+     * (which points the client at the Location header it already
+     * captured), then reopen. Bounded to avoid an infinite loop if a
+     * server ever redirects in a cycle. */
+    const int MAX_REDIRECTS = 5;
+    int64_t content_length = -1;
+    int status = 0;
+
+    for (int redirect_count = 0; redirect_count <= MAX_REDIRECTS; redirect_count++) {
+        esp_err_t err = esp_http_client_open(client, 0);
+        if (err != ESP_OK) {
+            ESP_LOGE(TAG, "http open failed: %s", esp_err_to_name(err));
+            esp_http_client_cleanup(client);
+            return NULL;
+        }
+
+        content_length = esp_http_client_fetch_headers(client);
+        status = esp_http_client_get_status_code(client);
+
+        if (status >= 300 && status < 400) {
+            ESP_LOGI(TAG, "redirect (%d), following...", status);
+            esp_http_client_close(client);
+            esp_err_t rerr = esp_http_client_set_redirection(client);
+            if (rerr != ESP_OK) {
+                ESP_LOGE(TAG, "set_redirection failed: %s", esp_err_to_name(rerr));
+                esp_http_client_cleanup(client);
+                return NULL;
+            }
+            continue; /* loop: open() again, now pointed at the new URL */
+        }
+
+        /* Not a redirect -- either a real 200 with content, or a real
+         * error status. Break out and handle below. */
+        break;
+    }
+
+    if (status < 200 || status >= 300) {
+        ESP_LOGE(TAG, "http request failed, final status %d", status);
+        esp_http_client_close(client);
         esp_http_client_cleanup(client);
         return NULL;
     }
 
-    int64_t content_length = esp_http_client_fetch_headers(client);
     if (content_length <= 0) {
         ESP_LOGE(TAG, "bad content length: %lld", (long long)content_length);
         esp_http_client_close(client);
