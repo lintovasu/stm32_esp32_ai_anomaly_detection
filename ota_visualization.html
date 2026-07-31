@@ -1,0 +1,405 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>STM32 OTA — Block by Block</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600;700&family=IBM+Plex+Sans:wght@400;500;600&display=swap');
+
+:root{
+  --bg: #0a0e14;
+  --panel: #10161f;
+  --panel2: #141b26;
+  --line: #232c3a;
+  --text: #c7d0dc;
+  --dim: #5f6b7a;
+  --amber: #ffb454;
+  --cyan: #5ec4d6;
+  --green: #6fcf97;
+  --red: #e8735c;
+  --violet: #a389e8;
+}
+*{box-sizing:border-box;}
+html,body{margin:0;padding:0;}
+body{
+  background: var(--bg);
+  color: var(--text);
+  font-family: 'IBM Plex Sans', sans-serif;
+  min-height:100vh;
+  padding: 28px 20px 60px;
+}
+.wrap{max-width: 980px; margin: 0 auto;}
+
+.eyebrow{
+  font-family:'IBM Plex Mono', monospace;
+  font-size:11px; letter-spacing:.18em; text-transform:uppercase;
+  color: var(--amber); margin-bottom:6px;
+}
+h1{
+  font-family:'IBM Plex Mono', monospace;
+  font-size: 22px; font-weight:700; margin: 0 0 4px;
+  color:#eef2f6;
+}
+.subtitle{color:var(--dim); font-size:13.5px; margin-bottom:24px; max-width:640px; line-height:1.5;}
+
+/* ---- actor lifeline row ---- */
+.actors{
+  display:grid; grid-template-columns: repeat(4,1fr);
+  gap:10px; margin-bottom:22px;
+}
+.actor{
+  background:var(--panel); border:1px solid var(--line); border-radius:6px;
+  padding:12px 10px; text-align:center; transition: all .35s ease;
+}
+.actor .label{font-family:'IBM Plex Mono',monospace; font-size:11.5px; color:var(--dim); letter-spacing:.04em;}
+.actor .name{font-size:13px; margin-top:3px; color:var(--text); font-weight:500;}
+.actor.active{
+  border-color: var(--amber);
+  box-shadow: 0 0 0 1px var(--amber) inset, 0 0 18px -6px var(--amber);
+}
+.actor.active .label{color:var(--amber);}
+
+/* ---- layout: memory map + side panel ---- */
+.main-grid{
+  display:grid; grid-template-columns: 1.4fr 1fr; gap:16px;
+  margin-bottom:20px;
+}
+@media (max-width: 760px){ .main-grid{grid-template-columns:1fr;} }
+
+.card{
+  background:var(--panel); border:1px solid var(--line); border-radius:8px;
+  padding:16px;
+}
+.card h2{
+  font-family:'IBM Plex Mono',monospace; font-size:11.5px; text-transform:uppercase;
+  letter-spacing:.12em; color:var(--dim); margin:0 0 14px; font-weight:600;
+}
+
+/* flash blocks */
+.flashmap{display:flex; flex-direction:column; gap:3px;}
+.block{
+  position:relative;
+  border-radius:5px; border:1px solid var(--line);
+  background: var(--panel2);
+  padding:9px 12px;
+  transition: all .4s cubic-bezier(.4,0,.2,1);
+  overflow:hidden;
+}
+.block .fill{
+  position:absolute; inset:0; width:0%;
+  background: linear-gradient(90deg, rgba(94,196,214,.28), rgba(94,196,214,.12));
+  transition: width .5s ease;
+  z-index:0;
+}
+.block-row{position:relative; z-index:1; display:flex; justify-content:space-between; align-items:baseline;}
+.block .name{font-family:'IBM Plex Mono',monospace; font-size:12.5px; font-weight:600; color:var(--text);}
+.block .addr{font-family:'IBM Plex Mono',monospace; font-size:10px; color:var(--dim);}
+.block .status{
+  font-family:'IBM Plex Mono',monospace; font-size:9.5px; letter-spacing:.08em;
+  padding:2px 7px; border-radius:20px; text-transform:uppercase; font-weight:600;
+  position:relative; z-index:1;
+}
+.st-idle{background:#1c2431; color:var(--dim);}
+.st-erasing{background:rgba(232,115,92,.16); color:var(--red);}
+.st-writing{background:rgba(94,196,214,.16); color:var(--cyan);}
+.st-verifying{background:rgba(163,137,232,.18); color:var(--violet);}
+.st-pending{background:rgba(255,180,84,.16); color:var(--amber);}
+.st-active{background:rgba(111,207,151,.18); color:var(--green);}
+.st-confirmed{background:rgba(111,207,151,.28); color:var(--green);}
+
+.block.bootloader{padding:7px 12px;}
+.block.tiny .name{font-size:11px;}
+.block.pulse{animation: pulseglow 1.1s ease-in-out infinite;}
+@keyframes pulseglow{
+  0%,100%{box-shadow: 0 0 0 1px var(--line);}
+  50%{box-shadow: 0 0 0 1px var(--red), 0 0 14px -4px var(--red);}
+}
+.block.pulse-write{animation: pulseglow2 1.1s ease-in-out infinite;}
+@keyframes pulseglow2{
+  0%,100%{box-shadow: 0 0 0 1px var(--line);}
+  50%{box-shadow: 0 0 0 1px var(--cyan), 0 0 14px -4px var(--cyan);}
+}
+.block.pulse-verify{animation: pulseglow3 1.1s ease-in-out infinite;}
+@keyframes pulseglow3{
+  0%,100%{box-shadow: 0 0 0 1px var(--line);}
+  50%{box-shadow: 0 0 0 1px var(--violet), 0 0 14px -4px var(--violet);}
+}
+.block.jumped{
+  box-shadow: 0 0 0 1.5px var(--green), 0 0 20px -4px var(--green);
+}
+
+/* metadata table */
+.meta-table{font-family:'IBM Plex Mono',monospace; font-size:12px; width:100%; border-collapse:collapse;}
+.meta-table tr{border-bottom:1px solid var(--line);}
+.meta-table tr:last-child{border-bottom:none;}
+.meta-table td{padding:7px 2px;}
+.meta-table td.k{color:var(--dim);}
+.meta-table td.v{text-align:right; font-weight:600; color:var(--text); transition: color .3s;}
+.v.changed{color: var(--amber);}
+
+/* step panel */
+.step-panel{
+  background:var(--panel); border:1px solid var(--line); border-radius:8px;
+  padding:20px 22px; margin-bottom:16px;
+}
+.step-head{display:flex; align-items:center; gap:10px; margin-bottom:8px;}
+.step-num{
+  font-family:'IBM Plex Mono',monospace; font-size:11px; color:var(--bg);
+  background:var(--amber); border-radius:4px; padding:2px 8px; font-weight:700;
+}
+.step-title{font-size:15.5px; font-weight:600; color:#eef2f6;}
+.step-desc{font-size:13.5px; line-height:1.6; color:var(--text); margin:0;}
+.step-desc b{color:var(--amber); font-weight:600;}
+.step-desc code{
+  font-family:'IBM Plex Mono',monospace; background:var(--panel2); padding:1px 5px;
+  border-radius:3px; font-size:12px; color:var(--cyan);
+}
+
+.nav{display:flex; align-items:center; justify-content:space-between; gap:12px;}
+.nav-btns{display:flex; gap:8px;}
+button{
+  font-family:'IBM Plex Mono',monospace; font-size:12px; font-weight:600;
+  background:var(--panel2); color:var(--text); border:1px solid var(--line);
+  border-radius:6px; padding:9px 16px; cursor:pointer; transition: all .15s;
+}
+button:hover:not(:disabled){border-color:var(--amber); color:var(--amber);}
+button:disabled{opacity:.35; cursor:default;}
+button.branch{border-color: var(--red); color:var(--red);}
+button.branch:hover{background:rgba(232,115,92,.1);}
+button.primary{background:var(--amber); color:#1a1206; border-color:var(--amber);}
+button.primary:hover{filter:brightness(1.08); color:#1a1206;}
+
+.progress-dots{display:flex; gap:5px; flex-wrap:wrap;}
+.dot{width:7px; height:7px; border-radius:50%; background:var(--line); cursor:pointer; transition:all .2s;}
+.dot.done{background:var(--dim);}
+.dot.now{background:var(--amber); width:9px; height:9px;}
+.dot.fail{background:var(--red);}
+
+.legend{display:flex; gap:14px; flex-wrap:wrap; font-family:'IBM Plex Mono',monospace; font-size:10.5px; color:var(--dim); margin-top:14px;}
+.legend span{display:flex; align-items:center; gap:5px;}
+.legend i{width:8px; height:8px; border-radius:50%; display:inline-block;}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="eyebrow">FLASH MEMORY WALKTHROUGH</div>
+  <h1>STM32 OTA Update — Block by Block</h1>
+  <p class="subtitle">Follow one update end to end: how the image gets from the cloud onto the wire, how it's written into flash, and exactly how the bootloader decides whether to trust it. Step through with Next, or jump to any point below.</p>
+
+  <div class="actors" id="actors"></div>
+
+  <div class="main-grid">
+    <div class="card">
+      <h2>Flash memory map — STM32F407 (1 MB)</h2>
+      <div class="flashmap" id="flashmap"></div>
+      <div class="legend">
+        <span><i style="background:var(--dim)"></i>idle</span>
+        <span><i style="background:var(--red)"></i>erasing</span>
+        <span><i style="background:var(--cyan)"></i>writing</span>
+        <span><i style="background:var(--violet)"></i>verifying</span>
+        <span><i style="background:var(--amber)"></i>pending</span>
+        <span><i style="background:var(--green)"></i>active / confirmed</span>
+      </div>
+    </div>
+    <div class="card">
+      <h2>Metadata sector contents</h2>
+      <table class="meta-table" id="metatable"></table>
+    </div>
+  </div>
+
+  <div class="step-panel">
+    <div class="step-head">
+      <span class="step-num" id="stepnum">01</span>
+      <span class="step-title" id="steptitle"></span>
+    </div>
+    <p class="step-desc" id="stepdesc"></p>
+  </div>
+
+  <div class="nav">
+    <div class="nav-btns">
+      <button id="prevBtn">&larr; Back</button>
+      <button id="nextBtn" class="primary">Next &rarr;</button>
+      <button id="failBtn" class="branch">Show failure / rollback path</button>
+    </div>
+    <div class="progress-dots" id="dots"></div>
+  </div>
+</div>
+
+<script>
+// ---------------- data model ----------------
+const BLOCKS = [
+  {id:'boot', name:'Bootloader', addr:'0x0800_0000 – 0x0800_8000  (32 KB)', tiny:true},
+  {id:'meta', name:'Metadata sector', addr:'0x0800_8000 – 0x0800_C000  (16 KB)', tiny:true},
+  {id:'rsvd', name:'Reserved', addr:'0x0800_C000 – 0x0801_0000  (16 KB)', tiny:true},
+  {id:'slotA', name:'App Slot A', addr:'0x0801_0000 – 0x0808_0000  (448 KB)'},
+  {id:'slotB', name:'App Slot B', addr:'0x0808_0000 – 0x0810_0000  (512 KB)'},
+];
+
+const ACTORS = ['Cloud / MQTT broker','ESP32-S3','STM32 bootloader','STM32 application'];
+
+// each step: { actor, blocks: {id: {status, fillPct, pulse}}, meta: {...}, title, desc }
+function baseMeta(overrides){
+  return Object.assign({active_slot:'A', pending_update:0, staging_size:0, staging_crc32:'0x00000000', boot_attempts:0, confirmed_good:1}, overrides);
+}
+
+const steps = [
+  { actor:3, title:'Normal operation', blocks:{slotA:{status:'active'}, slotB:{status:'idle'}},
+    meta: baseMeta({}),
+    desc:"The device is running normally from <b>Slot A</b>. Metadata says <code>active_slot = A</code>, <code>confirmed_good = 1</code> — this image has already proven itself. Slot B is just spare, unused flash right now." },
+
+  { actor:0, title:'New firmware published', blocks:{slotA:{status:'active'}, slotB:{status:'idle'}},
+    meta: baseMeta({}),
+    desc:"An MQTT message arrives at the ESP32-S3 with a download URL, version string, and expected SHA-256 for the new firmware. Nothing on the STM32 side has happened yet — this is entirely between the cloud and the ESP32." },
+
+  { actor:1, title:'ESP32 downloads & verifies', blocks:{slotA:{status:'active'}, slotB:{status:'idle'}},
+    meta: baseMeta({}),
+    desc:"ESP32-S3 pulls the <code>.bin</code> over HTTPS and checks it against the SHA-256 the cloud promised. If it doesn't match, the whole thing is aborted right here — <b>a bad image never even reaches the STM32.</b> It also computes a CRC32 over the image for the STM32 to check later." },
+
+  { actor:1, title:'CMD_BEGIN → erase staging slot', blocks:{slotA:{status:'active'}, slotB:{status:'erasing', pulse:'erase'}},
+    meta: baseMeta({}),
+    desc:"ESP32 sends <code>CMD_BEGIN(total_size)</code> over UART. The STM32 app identifies Slot B as the inactive slot and erases all its sectors up front — this is the slow part, roughly 1 second per 128 KB sector, so it runs in a low-priority task, not the UART interrupt." },
+
+  { actor:1, title:'CMD_DATA → streaming write', blocks:{slotA:{status:'active'}, slotB:{status:'writing', fillPct:55, pulse:'write'}},
+    meta: baseMeta({}),
+    desc:"ESP32 streams the image in ~512 B chunks as <code>CMD_DATA(offset, len, data)</code> frames. Each chunk is written to Slot B at its offset and ACKed before the next one is sent. A running CRC32 is accumulated on the STM32 side as bytes arrive." },
+
+  { actor:1, title:'CMD_END → verify + stage', blocks:{slotA:{status:'active'}, slotB:{status:'verifying', fillPct:100, pulse:'verify'}},
+    meta: baseMeta({}),
+    desc:"ESP32 sends the final <code>CMD_END(crc32)</code>. The STM32 app finalizes its running CRC32 and compares it to the value the ESP32 sent. They match, so it writes the metadata sector: <code>staging_size</code>, <code>staging_crc32</code>, and <code>pending_update = 1</code>." },
+
+  { actor:3, title:'Reset — hand off to bootloader', blocks:{slotA:{status:'active'}, slotB:{status:'pending', fillPct:100}},
+    meta: baseMeta({pending_update:1, staging_size:187432, staging_crc32:'0xA13C7F02'}),
+    desc:"The app ACKs success to the ESP32, then calls <code>NVIC_SystemReset()</code>. On every reset, control always goes to the bootloader first (it lives at the true flash base, <code>0x0800_0000</code>) — there's no special 'update mode', it just always checks." },
+
+  { actor:2, title:'Bootloader re-verifies the staged image', blocks:{slotA:{status:'active'}, slotB:{status:'verifying', fillPct:100, pulse:'verify'}},
+    meta: baseMeta({pending_update:1, staging_size:187432, staging_crc32:'0xA13C7F02'}),
+    desc:"Bootloader reads metadata, sees <code>pending_update = 1</code>, and recomputes CRC32 over Slot B itself — <b>independently of what the app already checked.</b> This catches a corrupted metadata write or a partial power loss that the app-side check couldn't see. It matches." },
+
+  { actor:2, title:'Promote Slot B → active', blocks:{slotA:{status:'idle'}, slotB:{status:'pending', fillPct:100}},
+    meta: baseMeta({active_slot:'B', pending_update:0, staging_size:187432, staging_crc32:'0xA13C7F02', boot_attempts:0, confirmed_good:0}),
+    desc:"Bootloader flips the metadata: <code>active_slot = B</code>, clears <code>pending_update</code>, resets <code>boot_attempts</code> to 0, and — importantly — clears <code>confirmed_good</code>. The new image hasn't proven itself yet; it has to earn that flag back after it boots." },
+
+  { actor:2, title:'Relocate vectors & jump', blocks:{slotA:{status:'idle'}, slotB:{status:'active', jumped:true}},
+    meta: baseMeta({active_slot:'B', pending_update:0, staging_size:187432, staging_crc32:'0xA13C7F02', boot_attempts:1, confirmed_good:0}),
+    desc:"Bootloader disables interrupts, sets <code>SCB->VTOR</code> to Slot B's base address (so future interrupts vector into the new app's own handlers, not the bootloader's), loads Slot B's stack pointer, and jumps to Slot B's reset handler. <code>boot_attempts</code> ticks to 1 as an un-confirmed boot." },
+
+  { actor:3, title:'New app boots & self-checks', blocks:{slotA:{status:'idle'}, slotB:{status:'active', jumped:true}},
+    meta: baseMeta({active_slot:'B', pending_update:0, staging_size:187432, staging_crc32:'0xA13C7F02', boot_attempts:1, confirmed_good:0}),
+    desc:"The new firmware is now genuinely running from Slot B. It runs its own startup (copy .data, zero .bss, init peripherals) exactly as if this were a normal power-on. A few seconds in, it runs self-checks — sensor responds, MQTT test publish succeeds." },
+
+  { actor:3, title:'Confirmed good — update complete', blocks:{slotA:{status:'idle'}, slotB:{status:'confirmed', jumped:true}},
+    meta: baseMeta({active_slot:'B', pending_update:0, staging_size:187432, staging_crc32:'0xA13C7F02', boot_attempts:0, confirmed_good:1}),
+    desc:"Self-checks pass, so the app calls <code>ota_confirm_good()</code>, which sets <code>confirmed_good = 1</code> and resets <code>boot_attempts</code> to 0. The update is now permanent — the next reset for any unrelated reason (brown-out, watchdog) will boot Slot B normally, no rollback risk." },
+];
+
+// failure branch, inserted after step index 9 (jump) if user picks "Show failure path"
+const failSteps = [
+  { actor:3, title:'New app crashes before confirming', blocks:{slotA:{status:'idle'}, slotB:{status:'active', jumped:true}},
+    meta: baseMeta({active_slot:'B', pending_update:0, staging_size:187432, staging_crc32:'0xA13C7F02', boot_attempts:1, confirmed_good:0}),
+    desc:"Suppose the new image has a bug and hangs (or watchdog-resets) before ever calling <code>ota_confirm_good()</code>. The device resets — and, like every reset, lands back in the bootloader first." },
+
+  { actor:2, title:'Bootloader counts the failed attempt', blocks:{slotA:{status:'idle'}, slotB:{status:'active'}},
+    meta: baseMeta({active_slot:'B', pending_update:0, staging_size:187432, staging_crc32:'0xA13C7F02', boot_attempts:2, confirmed_good:0}),
+    desc:"No <code>pending_update</code> this time, so the bootloader skips straight to the confirm check: <code>confirmed_good</code> is still 0, so it increments <code>boot_attempts</code> (now 2) and jumps back into Slot B again — giving it another chance in case it was a one-off glitch." },
+
+  { actor:2, title:'Threshold exceeded → automatic rollback', blocks:{slotA:{status:'active', jumped:true}, slotB:{status:'pending'}},
+    meta: baseMeta({active_slot:'A', pending_update:0, staging_size:187432, staging_crc32:'0xA13C7F02', boot_attempts:0, confirmed_good:1}),
+    desc:"After <code>MAX_BOOT_ATTEMPTS</code> (3) consecutive un-confirmed boots, the bootloader gives up on Slot B and flips <code>active_slot</code> back to <b>A</b> — which is trusted by construction, since a slot can only become active after being confirmed_good at some point in its history. <code>confirmed_good</code> is set to 1 immediately since A was already proven." },
+
+  { actor:3, title:'Device recovers on the old firmware', blocks:{slotA:{status:'confirmed', jumped:true}, slotB:{status:'pending'}},
+    meta: baseMeta({active_slot:'A', pending_update:0, staging_size:187432, staging_crc32:'0xA13C7F02', boot_attempts:0, confirmed_good:1}),
+    desc:"The device is back on the last known-good firmware, fully autonomously — no human ever had to drive out to the device. Slot B still holds the bad image (untouched, in case you want to pull it for postmortem) and will simply be overwritten by the next update attempt." },
+];
+
+let idx = 0;
+let activeSequence = steps;
+let onFailBranch = false;
+
+const flashmapEl = document.getElementById('flashmap');
+const actorsEl = document.getElementById('actors');
+const metaEl = document.getElementById('metatable');
+const dotsEl = document.getElementById('dots');
+
+function renderActors(activeIdx){
+  actorsEl.innerHTML = ACTORS.map((a,i)=>`<div class="actor ${i===activeIdx?'active':''}"><div class="label">${String(i+1).padStart(2,'0')}</div><div class="name">${a}</div></div>`).join('');
+}
+
+function renderBlocks(blockState){
+  flashmapEl.innerHTML = BLOCKS.map(b=>{
+    const st = (blockState && blockState[b.id]) || {status:'idle'};
+    const fill = st.fillPct!==undefined ? st.fillPct : (st.status==='active'||st.status==='confirmed'?100:0);
+    const pulseClass = st.pulse==='erase'?'pulse':(st.pulse==='write'?'pulse-write':(st.pulse==='verify'?'pulse-verify':''));
+    const jumpClass = st.jumped ? 'jumped':'';
+    return `<div class="block ${b.tiny?'tiny':''} ${pulseClass} ${jumpClass}">
+      <div class="fill" style="width:${st.status==='writing'||st.status==='verifying'||st.status==='pending'||st.status==='active'||st.status==='confirmed'?fill:0}%"></div>
+      <div class="block-row">
+        <div>
+          <div class="name">${b.name}</div>
+          <div class="addr">${b.addr}</div>
+        </div>
+        <div class="status st-${st.status}">${st.status}</div>
+      </div>
+    </div>`;
+  }).join('');
+}
+
+let prevMeta = null;
+function renderMeta(meta){
+  const rows = [
+    ['magic', 'OTA_META_MAGIC'],
+    ['active_slot', meta.active_slot],
+    ['pending_update', meta.pending_update],
+    ['staging_size', meta.staging_size ? meta.staging_size.toLocaleString()+' B' : '0'],
+    ['staging_crc32', meta.staging_crc32],
+    ['boot_attempts', meta.boot_attempts],
+    ['confirmed_good', meta.confirmed_good],
+  ];
+  metaEl.innerHTML = rows.map(([k,v])=>{
+    const changed = prevMeta && String(prevMeta[k.replace('magic','active_slot')]) !== undefined && prevMeta[k] !== undefined && prevMeta[k] !== meta[k];
+    return `<tr><td class="k">${k}</td><td class="v ${changed?'changed':''}">${v}</td></tr>`;
+  }).join('');
+  prevMeta = meta;
+}
+
+function renderDots(){
+  dotsEl.innerHTML = activeSequence.map((s,i)=>{
+    const cls = i===idx?'now':(i<idx?'done':'');
+    return `<div class="dot ${cls} ${onFailBranch?'fail':''}" data-i="${i}"></div>`;
+  }).join('');
+  [...dotsEl.children].forEach(d=>d.addEventListener('click', ()=>{ idx=parseInt(d.dataset.i); render(); }));
+}
+
+function render(){
+  const s = activeSequence[idx];
+  renderActors(s.actor);
+  renderBlocks(s.blocks);
+  renderMeta(s.meta);
+  document.getElementById('stepnum').textContent = String(idx+1).padStart(2,'0');
+  document.getElementById('steptitle').textContent = s.title;
+  document.getElementById('stepdesc').innerHTML = s.desc;
+  renderDots();
+  document.getElementById('prevBtn').disabled = idx===0;
+  document.getElementById('nextBtn').disabled = idx===activeSequence.length-1;
+  document.getElementById('nextBtn').textContent = idx===activeSequence.length-1 ? (onFailBranch? 'End of rollback path':'Update complete') : 'Next →';
+  document.getElementById('failBtn').textContent = onFailBranch ? '← Back to happy path' : 'Show failure / rollback path';
+}
+
+document.getElementById('prevBtn').addEventListener('click', ()=>{ if(idx>0){idx--; render();} });
+document.getElementById('nextBtn').addEventListener('click', ()=>{ if(idx<activeSequence.length-1){idx++; render();} });
+document.getElementById('failBtn').addEventListener('click', ()=>{
+  if(!onFailBranch){
+    activeSequence = steps.slice(0,10).concat(failSteps); // up through "jump" (idx 9), then branch to failure
+    idx = 10;
+    onFailBranch = true;
+  } else {
+    activeSequence = steps;
+    idx = 0;
+    onFailBranch = false;
+  }
+  render();
+});
+
+render();
+</script>
+</body>
+</html>
