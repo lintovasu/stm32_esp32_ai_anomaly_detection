@@ -80,7 +80,7 @@ static bool send_begin(uint32_t total_size)
      * The original 3000ms here was sized for one sector's erase time,
      * not the whole slot -- too short, causing the STM32's genuinely
      * valid ACK to arrive after this wait had already given up. */
-    return send_frame_and_wait(buf, sizeof(buf), 10000);
+    return send_frame_and_wait(buf, sizeof(buf), 20000);
 }
 
 static bool send_data(uint32_t offset, const uint8_t *data, uint16_t len)
