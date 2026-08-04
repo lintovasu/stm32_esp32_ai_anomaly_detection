@@ -2,16 +2,25 @@
 #include "sensor_protocol.h"
 #include "ota_crc32.h"
 #include <string.h>
+#include <stdio.h>
 #include "freertos/FreeRTOS.h"
 #include "freertos/queue.h"
 #include "driver/uart.h"
 #include "esp_log.h"
+#include "mqtt_client.h"
 
 static const char *TAG = "ota_push";
 
 #define UART_PORT UART_NUM_1  /* must match main.c's UART_PORT */
 
 static QueueHandle_t s_ota_ack_queue;
+
+/* MQTT client/state from main.c (non-static so ota_push can publish status) */
+extern esp_mqtt_client_handle_t s_mqtt_client;
+extern volatile bool s_mqtt_connected;
+
+/* Topic used for OTA progress/status JSON messages */
+#define MQTT_TOPIC_OTA_STATUS "linto/sensors/node1/ota/status"
 
 void ota_push_init(void)
 {
@@ -117,8 +126,19 @@ bool stm32_ota_push(const uint8_t *image, uint32_t total_size)
 
     ESP_LOGI(TAG, "starting OTA push, %lu bytes", (unsigned long)total_size);
 
+    /* Publish BEGIN status to MQTT */
+    char msgbuf[256];
+    int n = snprintf(msgbuf, sizeof(msgbuf), "{\"state\":\"begin\",\"percent\":0,\"offset\":0,\"total\":%u}", (unsigned)total_size);
+    if (n > 0 && s_mqtt_connected) {
+        esp_mqtt_client_publish(s_mqtt_client, MQTT_TOPIC_OTA_STATUS, msgbuf, 0, 1, 0);
+    }
+
     if (!send_begin(total_size)) {
         ESP_LOGE(TAG, "BEGIN rejected or no ACK");
+        n = snprintf(msgbuf, sizeof(msgbuf), "{\"state\":\"error\",\"stage\":\"begin\",\"message\":\"BEGIN rejected or no ACK\"}");
+        if (n > 0 && s_mqtt_connected) {
+            esp_mqtt_client_publish(s_mqtt_client, MQTT_TOPIC_OTA_STATUS, msgbuf, 0, 1, 0);
+        }
         return false;
     }
 
@@ -126,6 +146,7 @@ bool stm32_ota_push(const uint8_t *image, uint32_t total_size)
 
     uint32_t offset = 0;
     const int MAX_RETRIES = 3;
+    int last_percent = -1;
 
     while (offset < total_size) {
         uint16_t len = (total_size - offset > OTA_CHUNK_SIZE)
@@ -144,15 +165,38 @@ bool stm32_ota_push(const uint8_t *image, uint32_t total_size)
         if (!ok) {
             ESP_LOGE(TAG, "chunk at offset %lu failed after %d retries, aborting",
                      (unsigned long)offset, MAX_RETRIES);
+            n = snprintf(msgbuf, sizeof(msgbuf), "{\"state\":\"error\",\"stage\":\"data\",\"offset\":%lu,\"message\":\"chunk failed after retries\"}", (unsigned long)offset);
+            if (n > 0 && s_mqtt_connected) {
+                esp_mqtt_client_publish(s_mqtt_client, MQTT_TOPIC_OTA_STATUS, msgbuf, 0, 1, 0);
+            }
             return false;
         }
 
         offset += len;
+
+        /* Publish progress if percent increased */
+        int percent = (int)((offset * 100UL) / total_size);
+        if (percent != last_percent) {
+            last_percent = percent;
+            n = snprintf(msgbuf, sizeof(msgbuf), "{\"state\":\"progress\",\"percent\":%d,\"offset\":%lu,\"total\":%u}", percent, (unsigned long)offset, (unsigned)total_size);
+            if (n > 0 && s_mqtt_connected) {
+                esp_mqtt_client_publish(s_mqtt_client, MQTT_TOPIC_OTA_STATUS, msgbuf, 0, 1, 0);
+            }
+        }
     }
 
     if (!send_end(crc)) {
         ESP_LOGE(TAG, "END rejected -- CRC mismatch or metadata write failed on STM32");
+        n = snprintf(msgbuf, sizeof(msgbuf), "{\"state\":\"error\",\"stage\":\"end\",\"message\":\"END rejected or CRC mismatch\"}");
+        if (n > 0 && s_mqtt_connected) {
+            esp_mqtt_client_publish(s_mqtt_client, MQTT_TOPIC_OTA_STATUS, msgbuf, 0, 1, 0);
+        }
         return false;
+    }
+
+    n = snprintf(msgbuf, sizeof(msgbuf), "{\"state\":\"complete\",\"percent\":100,\"crc\":%u,\"total\":%u}", (unsigned)crc, (unsigned)total_size);
+    if (n > 0 && s_mqtt_connected) {
+        esp_mqtt_client_publish(s_mqtt_client, MQTT_TOPIC_OTA_STATUS, msgbuf, 0, 1, 0);
     }
 
     ESP_LOGI(TAG, "OTA push complete, STM32 will reboot to apply");

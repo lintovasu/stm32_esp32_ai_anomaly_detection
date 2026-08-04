@@ -37,6 +37,7 @@
 #define MQTT_TOPIC_DIAG  "linto/sensors/node1/diag"
 #define MQTT_TOPIC_ALERT "linto/sensors/node1/alert"
 #define MQTT_TOPIC_OTA   "linto/sensors/node1/ota/update"  // operator publishes here to trigger an update
+#define MQTT_TOPIC_OTA_STATUS "linto/sensors/node1/ota/status"  // OTA progress/status messages (JSON)
 
 #define UART_PORT       UART_NUM_1
 #define UART_RX_PIN     17
@@ -48,8 +49,8 @@ static const char *TAG = "sensor_bridge";
 static EventGroupHandle_t s_wifi_event_group;
 #define WIFI_CONNECTED_BIT BIT0
 
-static esp_mqtt_client_handle_t s_mqtt_client;
-static volatile bool s_mqtt_connected = false;
+esp_mqtt_client_handle_t s_mqtt_client;
+volatile bool s_mqtt_connected = false;
 
 /* Diagnostics counters, published periodically */
 static volatile uint32_t s_frames_ok = 0;
