@@ -1,0 +1,26 @@
+Middlewares/Third_Party/FreeRTOS/Source/timers.o: \
+ ../Middlewares/Third_Party/FreeRTOS/Source/timers.c \
+ C:/stm32espai_anomaly_detection/stm32_esp32_ai_anomaly_detection/stm32_sensor_sim_ai_anomalydetection/Middlewares/Third_Party/FreeRTOS/Source/include/FreeRTOS.h \
+ ../Core/Inc/FreeRTOSConfig.h \
+ C:/stm32espai_anomaly_detection/stm32_esp32_ai_anomaly_detection/stm32_sensor_sim_ai_anomalydetection/Middlewares/Third_Party/FreeRTOS/Source/include/projdefs.h \
+ C:/stm32espai_anomaly_detection/stm32_esp32_ai_anomaly_detection/stm32_sensor_sim_ai_anomalydetection/Middlewares/Third_Party/FreeRTOS/Source/include/portable.h \
+ C:/stm32espai_anomaly_detection/stm32_esp32_ai_anomaly_detection/stm32_sensor_sim_ai_anomalydetection/Middlewares/Third_Party/FreeRTOS/Source/include/deprecated_definitions.h \
+ C:/stm32espai_anomaly_detection/stm32_esp32_ai_anomaly_detection/stm32_sensor_sim_ai_anomalydetection/Middlewares/Third_Party/FreeRTOS/Source/portable/GCC/ARM_CM4F/portmacro.h \
+ C:/stm32espai_anomaly_detection/stm32_esp32_ai_anomaly_detection/stm32_sensor_sim_ai_anomalydetection/Middlewares/Third_Party/FreeRTOS/Source/include/mpu_wrappers.h \
+ C:/stm32espai_anomaly_detection/stm32_esp32_ai_anomaly_detection/stm32_sensor_sim_ai_anomalydetection/Middlewares/Third_Party/FreeRTOS/Source/include/task.h \
+ C:/stm32espai_anomaly_detection/stm32_esp32_ai_anomaly_detection/stm32_sensor_sim_ai_anomalydetection/Middlewares/Third_Party/FreeRTOS/Source/include/list.h \
+ C:/stm32espai_anomaly_detection/stm32_esp32_ai_anomaly_detection/stm32_sensor_sim_ai_anomalydetection/Middlewares/Third_Party/FreeRTOS/Source/include/queue.h \
+ C:/stm32espai_anomaly_detection/stm32_esp32_ai_anomaly_detection/stm32_sensor_sim_ai_anomalydetection/Middlewares/Third_Party/FreeRTOS/Source/include/task.h \
+ C:/stm32espai_anomaly_detection/stm32_esp32_ai_anomaly_detection/stm32_sensor_sim_ai_anomalydetection/Middlewares/Third_Party/FreeRTOS/Source/include/timers.h
+C:/stm32espai_anomaly_detection/stm32_esp32_ai_anomaly_detection/stm32_sensor_sim_ai_anomalydetection/Middlewares/Third_Party/FreeRTOS/Source/include/FreeRTOS.h:
+../Core/Inc/FreeRTOSConfig.h:
+C:/stm32espai_anomaly_detection/stm32_esp32_ai_anomaly_detection/stm32_sensor_sim_ai_anomalydetection/Middlewares/Third_Party/FreeRTOS/Source/include/projdefs.h:
+C:/stm32espai_anomaly_detection/stm32_esp32_ai_anomaly_detection/stm32_sensor_sim_ai_anomalydetection/Middlewares/Third_Party/FreeRTOS/Source/include/portable.h:
+C:/stm32espai_anomaly_detection/stm32_esp32_ai_anomaly_detection/stm32_sensor_sim_ai_anomalydetection/Middlewares/Third_Party/FreeRTOS/Source/include/deprecated_definitions.h:
+C:/stm32espai_anomaly_detection/stm32_esp32_ai_anomaly_detection/stm32_sensor_sim_ai_anomalydetection/Middlewares/Third_Party/FreeRTOS/Source/portable/GCC/ARM_CM4F/portmacro.h:
+C:/stm32espai_anomaly_detection/stm32_esp32_ai_anomaly_detection/stm32_sensor_sim_ai_anomalydetection/Middlewares/Third_Party/FreeRTOS/Source/include/mpu_wrappers.h:
+C:/stm32espai_anomaly_detection/stm32_esp32_ai_anomaly_detection/stm32_sensor_sim_ai_anomalydetection/Middlewares/Third_Party/FreeRTOS/Source/include/task.h:
+C:/stm32espai_anomaly_detection/stm32_esp32_ai_anomaly_detection/stm32_sensor_sim_ai_anomalydetection/Middlewares/Third_Party/FreeRTOS/Source/include/list.h:
+C:/stm32espai_anomaly_detection/stm32_esp32_ai_anomaly_detection/stm32_sensor_sim_ai_anomalydetection/Middlewares/Third_Party/FreeRTOS/Source/include/queue.h:
+C:/stm32espai_anomaly_detection/stm32_esp32_ai_anomaly_detection/stm32_sensor_sim_ai_anomalydetection/Middlewares/Third_Party/FreeRTOS/Source/include/task.h:
+C:/stm32espai_anomaly_detection/stm32_esp32_ai_anomaly_detection/stm32_sensor_sim_ai_anomalydetection/Middlewares/Third_Party/FreeRTOS/Source/include/timers.h:

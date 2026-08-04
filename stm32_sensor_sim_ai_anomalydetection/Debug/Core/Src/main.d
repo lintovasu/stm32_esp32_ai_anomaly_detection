@@ -26,12 +26,23 @@ Core/Src/main.o: ../Core/Src/main.c ../Core/Inc/main.h \
  ../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_i2c_ex.h \
  ../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_pwr.h \
  ../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_pwr_ex.h \
+ ../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_tim.h \
+ ../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_tim_ex.h \
  ../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_uart.h \
  ../Core/Inc/sensor_protocol.h ../Core/Inc/ai_inference.h \
  ../Core/Src/mpu6050.h ../Core/Inc/vibration_rms.h \
  ../Core/Inc/vibration_itm_logger.h \
  C:/stm32espai_anomaly_detection/stm32_esp32_ai_anomaly_detection/stm32_sensor_sim_ai_anomalydetection/app_ota_client/Inc/ota_receiver.h \
- C:/stm32espai_anomaly_detection/stm32_esp32_ai_anomaly_detection/stm32_sensor_sim_ai_anomalydetection/app_ota_client/Inc/ota_confirm.h
+ C:/stm32espai_anomaly_detection/stm32_esp32_ai_anomaly_detection/stm32_sensor_sim_ai_anomalydetection/app_ota_client/Inc/ota_confirm.h \
+ C:/stm32espai_anomaly_detection/stm32_esp32_ai_anomaly_detection/stm32_sensor_sim_ai_anomalydetection/Middlewares/Third_Party/FreeRTOS/Source/include/FreeRTOS.h \
+ ../Core/Inc/FreeRTOSConfig.h \
+ C:/stm32espai_anomaly_detection/stm32_esp32_ai_anomaly_detection/stm32_sensor_sim_ai_anomalydetection/Middlewares/Third_Party/FreeRTOS/Source/include/projdefs.h \
+ C:/stm32espai_anomaly_detection/stm32_esp32_ai_anomaly_detection/stm32_sensor_sim_ai_anomalydetection/Middlewares/Third_Party/FreeRTOS/Source/include/portable.h \
+ C:/stm32espai_anomaly_detection/stm32_esp32_ai_anomaly_detection/stm32_sensor_sim_ai_anomalydetection/Middlewares/Third_Party/FreeRTOS/Source/include/deprecated_definitions.h \
+ C:/stm32espai_anomaly_detection/stm32_esp32_ai_anomaly_detection/stm32_sensor_sim_ai_anomalydetection/Middlewares/Third_Party/FreeRTOS/Source/portable/GCC/ARM_CM4F/portmacro.h \
+ C:/stm32espai_anomaly_detection/stm32_esp32_ai_anomaly_detection/stm32_sensor_sim_ai_anomalydetection/Middlewares/Third_Party/FreeRTOS/Source/include/mpu_wrappers.h \
+ C:/stm32espai_anomaly_detection/stm32_esp32_ai_anomaly_detection/stm32_sensor_sim_ai_anomalydetection/Middlewares/Third_Party/FreeRTOS/Source/include/task.h \
+ C:/stm32espai_anomaly_detection/stm32_esp32_ai_anomaly_detection/stm32_sensor_sim_ai_anomalydetection/Middlewares/Third_Party/FreeRTOS/Source/include/list.h
 ../Core/Inc/main.h:
 ../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal.h:
 ../Core/Inc/stm32f4xx_hal_conf.h:
@@ -60,6 +71,8 @@ Core/Src/main.o: ../Core/Src/main.c ../Core/Inc/main.h \
 ../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_i2c_ex.h:
 ../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_pwr.h:
 ../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_pwr_ex.h:
+../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_tim.h:
+../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_tim_ex.h:
 ../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_uart.h:
 ../Core/Inc/sensor_protocol.h:
 ../Core/Inc/ai_inference.h:
@@ -68,3 +81,12 @@ Core/Src/main.o: ../Core/Src/main.c ../Core/Inc/main.h \
 ../Core/Inc/vibration_itm_logger.h:
 C:/stm32espai_anomaly_detection/stm32_esp32_ai_anomaly_detection/stm32_sensor_sim_ai_anomalydetection/app_ota_client/Inc/ota_receiver.h:
 C:/stm32espai_anomaly_detection/stm32_esp32_ai_anomaly_detection/stm32_sensor_sim_ai_anomalydetection/app_ota_client/Inc/ota_confirm.h:
+C:/stm32espai_anomaly_detection/stm32_esp32_ai_anomaly_detection/stm32_sensor_sim_ai_anomalydetection/Middlewares/Third_Party/FreeRTOS/Source/include/FreeRTOS.h:
+../Core/Inc/FreeRTOSConfig.h:
+C:/stm32espai_anomaly_detection/stm32_esp32_ai_anomaly_detection/stm32_sensor_sim_ai_anomalydetection/Middlewares/Third_Party/FreeRTOS/Source/include/projdefs.h:
+C:/stm32espai_anomaly_detection/stm32_esp32_ai_anomaly_detection/stm32_sensor_sim_ai_anomalydetection/Middlewares/Third_Party/FreeRTOS/Source/include/portable.h:
+C:/stm32espai_anomaly_detection/stm32_esp32_ai_anomaly_detection/stm32_sensor_sim_ai_anomalydetection/Middlewares/Third_Party/FreeRTOS/Source/include/deprecated_definitions.h:
+C:/stm32espai_anomaly_detection/stm32_esp32_ai_anomaly_detection/stm32_sensor_sim_ai_anomalydetection/Middlewares/Third_Party/FreeRTOS/Source/portable/GCC/ARM_CM4F/portmacro.h:
+C:/stm32espai_anomaly_detection/stm32_esp32_ai_anomaly_detection/stm32_sensor_sim_ai_anomalydetection/Middlewares/Third_Party/FreeRTOS/Source/include/mpu_wrappers.h:
+C:/stm32espai_anomaly_detection/stm32_esp32_ai_anomaly_detection/stm32_sensor_sim_ai_anomalydetection/Middlewares/Third_Party/FreeRTOS/Source/include/task.h:
+C:/stm32espai_anomaly_detection/stm32_esp32_ai_anomaly_detection/stm32_sensor_sim_ai_anomalydetection/Middlewares/Third_Party/FreeRTOS/Source/include/list.h:

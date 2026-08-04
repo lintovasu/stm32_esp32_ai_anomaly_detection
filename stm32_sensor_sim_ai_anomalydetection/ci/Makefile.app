@@ -57,12 +57,20 @@ OTA_CLIENT_SRCS := $(wildcard $(ROOT_DIR)/app_ota_client/Src/*.c)
 HAL_SRC = $(CUBE_DIR)/STM32F4xx_HAL_Driver/Src
 STARTUP :=$(wildcard $(ROOT_DIR)/Core/Startup/*.s)
 HAL_SRCS = $(wildcard $(HAL_SRC)/*.c)
+
+FreeRTOS_SRC1 = \
+  $(ROOT_DIR)/Middlewares/Third_Party/FreeRTOS/Source/CMSIS_RTOS_V2/cmsis_os2.c \
+  $(ROOT_DIR)/Middlewares/Third_Party/FreeRTOS/Source/portable/GCC/ARM_CM4F/port.c \
+  $(ROOT_DIR)/Middlewares/Third_Party/FreeRTOS/Source/portable/MemMang/heap_4.c
+
+FreeRTOS_SRC2 = $(wildcard $(ROOT_DIR)/Middlewares/Third_Party/FreeRTOS/Source/*.c)
+
 BOOT_LOADER_SRC = \
   $(ROOT_DIR)/bootloader/Src/flash_metadata.c \
   $(ROOT_DIR)/bootloader/Src/flash_ll.c \
   $(ROOT_DIR)/bootloader/Src/crc32.c
 
-SRCS = $(APP_SRCS) $(OTA_CLIENT_SRCS) $(BOOT_LOADER_SRC) $(HAL_SRCS) $(STARTUP)
+SRCS = $(APP_SRCS) $(OTA_CLIENT_SRCS) $(BOOT_LOADER_SRC) $(HAL_SRCS) $(STARTUP) $(FreeRTOS_SRC1) $(FreeRTOS_SRC2)
 
 INC = \
   -Iapp_ota_client/inc \
@@ -74,6 +82,8 @@ INC = \
   -I$(OTA_CLIENT_INC) \
   -I$(BOOT_LOADER_INC) \
   -I$(MIDDLEWARE_INC) \
+  -I$(ROOT_DIR)/Middlewares/Third_Party/FreeRTOS/Source/include\
+  -I$(ROOT_DIR)/Middlewares/Third_Party/FreeRTOS/Source/portable/GCC/ARM_CM4F\
   -Iconfig
 
 DEFS = -DSTM32F407xx -DUSE_HAL_DRIVER -DFW_VERSION=\"$(VERSION)\" -DFW_SLOT=\"$(SLOT)\"

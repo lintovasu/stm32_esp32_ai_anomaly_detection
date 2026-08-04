@@ -29,6 +29,8 @@
 #include "vibration_itm_logger.h"
 #include "ota_receiver.h"
 #include "ota_confirm.h"
+#include "FreeRTOS.h"
+#include "task.h"
 /* Private typedef -----------------------------------------------------------*/
 /* USER CODE BEGIN PTD */
 
@@ -72,6 +74,7 @@ void SystemClock_Config(void);
 static void MX_GPIO_Init(void);
 static void MX_USART2_UART_Init(void);
 static void MX_I2C1_Init(void);
+
 /* USER CODE BEGIN PFP */
 
 #define SENSOR_ID       0x01
@@ -87,55 +90,14 @@ static float pseudo_noise(float amplitude)
     return (unit - 0.5f) * 2.0f * amplitude;
 }
 
-int main(void)
+static void SensorTask(void *argument)
 {
-
-  /* USER CODE BEGIN 1 */
-
-  /* USER CODE END 1 */
-
-  /* MCU Configuration--------------------------------------------------------*/
-
-  /* Reset of all peripherals, Initializes the Flash interface and the Systick. */
-  HAL_Init();
-  ota_receiver_init();
-  /* USER CODE BEGIN Init */
-
-  /* USER CODE END Init */
-
-  /* Configure the system clock */
-  SystemClock_Config();
-
-  /* USER CODE BEGIN SysInit */
-
-  /* USER CODE END SysInit */
-
-  /* Initialize all configured peripherals */
-  MX_GPIO_Init();
-  MX_USART2_UART_Init();
-  MX_I2C1_Init();
-  /* USER CODE BEGIN 2 */
-  ai_inference_init();
-  MPU6050_Init();
-  itm_init();
-
-  /* OTA: initialize the HDLC decoder and start interrupt-driven
-   * single-byte UART RX so the ESP32 can send OTA command frames
-   * (BEGIN/DATA/END) asynchronously, independent of the TX-only
-   * sensor telemetry loop below. */
-  hdlc_decoder_init(&ota_decoder);
-  HAL_UART_Receive_IT(&huart2, &ota_rx_byte, 1);
-  ota_boot_tick = HAL_GetTick();
-
   uint8_t txbuf[HDLC_TX_BUF_SIZE];
   float t = 0.0f;
-  /* USER CODE END 2 */
 
-  /* Infinite loop */
-  /* USER CODE BEGIN WHILE */
-  while (1)
+  for (;;)
   {
-	  	  	  /* OTA: handle a deferred BEGIN here in the main loop, not
+	  	  	  /* OTA: handle a deferred BEGIN here in the task, not
 	  	  	   * inside the UART RX interrupt -- this is where the ~1s
 	  	  	   * blocking sector erase actually happens. Sensor sampling
 	  	  	   * pauses for that ~1s while this runs, which only happens
@@ -193,9 +155,71 @@ int main(void)
 	          }
 
 	          t += (float)SAMPLE_PERIOD_MS / 1000.0f;
-	          HAL_Delay(SAMPLE_PERIOD_MS);
-
+	          /* vTaskDelay yields the CPU to other tasks/idle instead of
+	           * busy-blocking like HAL_Delay did in the old superloop. */
+	          vTaskDelay(pdMS_TO_TICKS(SAMPLE_PERIOD_MS));
   }
+}
+
+int main(void)
+{
+
+  /* USER CODE BEGIN 1 */
+
+  /* USER CODE END 1 */
+
+  /* MCU Configuration--------------------------------------------------------*/
+
+  /* Reset of all peripherals, Initializes the Flash interface and the Systick. */
+  HAL_Init();
+  ota_receiver_init();
+  /* USER CODE BEGIN Init */
+
+  /* USER CODE END Init */
+
+  /* Configure the system clock */
+  SystemClock_Config();
+
+  /* USER CODE BEGIN SysInit */
+
+  /* USER CODE END SysInit */
+
+  /* Initialize all configured peripherals */
+  MX_GPIO_Init();
+  MX_USART2_UART_Init();
+  MX_I2C1_Init();
+  /* USER CODE BEGIN 2 */
+  ai_inference_init();
+  MPU6050_Init();
+  itm_init();
+
+  /* OTA: initialize the HDLC decoder and start interrupt-driven
+   * single-byte UART RX so the ESP32 can send OTA command frames
+   * (BEGIN/DATA/END) asynchronously, independent of the TX-only
+   * sensor telemetry loop below. */
+  hdlc_decoder_init(&ota_decoder);
+  HAL_UART_Receive_IT(&huart2, &ota_rx_byte, 1);
+  ota_boot_tick = HAL_GetTick();
+
+  /* Create the sensor/OTA task in place of the old superloop, then hand
+   * off to the scheduler. Stack size and priority are starting points --
+   * tune STACK_SIZE if you see a stack overflow hook fire, and raise the
+   * priority above tskIDLE_PRIORITY if other tasks get added later that
+   * shouldn't starve sensor sampling. */
+  if (xTaskCreate(SensorTask, "SensorTask", 512, NULL,
+                  tskIDLE_PRIORITY + 1, NULL) != pdPASS)
+  {
+    Error_Handler();
+  }
+  /* USER CODE END 2 */
+
+  /* USER CODE BEGIN WHILE */
+  vTaskStartScheduler();
+
+  /* vTaskStartScheduler() only returns if there isn't enough heap to
+   * create the idle/timer tasks -- should never reach here in normal
+   * operation. */
+  Error_Handler();
   /* USER CODE END 3 */
 }
 
@@ -454,6 +478,28 @@ void HAL_UART_ErrorCallback(UART_HandleTypeDef *huart)
 }
 
 /* USER CODE END 4 */
+
+/**
+  * @brief  Period elapsed callback in non blocking mode
+  * @note   This function is called  when TIM6 interrupt took place, inside
+  * HAL_TIM_IRQHandler(). It makes a direct call to HAL_IncTick() to increment
+  * a global variable "uwTick" used as application time base.
+  * @param  htim : TIM handle
+  * @retval None
+  */
+void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim)
+{
+  /* USER CODE BEGIN Callback 0 */
+
+  /* USER CODE END Callback 0 */
+  if (htim->Instance == TIM6)
+  {
+    HAL_IncTick();
+  }
+  /* USER CODE BEGIN Callback 1 */
+
+  /* USER CODE END Callback 1 */
+}
 
 /**
   * @brief  This function is executed in case of error occurrence.
